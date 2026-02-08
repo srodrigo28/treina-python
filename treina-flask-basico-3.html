@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tutorial: Flask Auth & Profile</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: "var(--color-base)",
+                        accent: "var(--color-accent)",
+                        text: "var(--color-text)",
+                        muted: "var(--color-muted)",
+                        card: "var(--color-card)",
+                        border: "var(--color-border)",
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --color-base: #0f172a;
+            --color-accent: #8b5cf6; /* Violeta (Identity/Auth) */
+            --color-text: #f8fafc;
+            --color-muted: #94a3b8;
+            --color-card: #1e293b;
+            --color-border: #334155;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                radial-gradient(circle at 20px 20px, rgba(139, 92, 246, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+        pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        .nav-item.active {
+            background-color: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        /* Syntax Highlighting Fake */
+        .keyword { color: #ff79c6; }
+        .string { color: #f1fa8c; }
+        .comment { color: #6272a4; font-style: italic; }
+        .function { color: #50fa7b; }
+        .sql-kw { color: #8be9fd; font-weight: bold; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+    <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+        <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="shield-check" class="text-accent w-6 h-6"></i>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-indigo-400">
+                    Flask Auth
+                </h1>
+            </div>
+            <p class="text-xs text-muted">Login, Registro & Perfil</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+                <span class="font-medium">O Projeto Auth</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="database" class="w-3 h-3"></i> Banco de Dados
+            </div>
+
+            <button onclick="showStep('step-db')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+                <span>Tabela Usuários</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="lock" class="w-3 h-3"></i> Backend
+            </div>
+
+            <button onclick="showStep('step-backend')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Lógica de Auth</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="layout" class="w-3 h-3"></i> Telas
+            </div>
+
+            <button onclick="showStep('step-login')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+                <span>Login & Cadastro</span>
+            </button>
+
+            <button onclick="showStep('step-dashboard')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
+                <span>Dashboard & Perfil</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+        <div class="max-w-4xl mx-auto pb-20">
+
+            <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+                <div class="border-b border-border pb-6">
+                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Nível 3
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Sistema de Login & Perfil</h2>
+                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
+                        Nenhuma aplicação real vive sem usuários. Vamos criar um sistema de autenticação seguro com hash de senhas, máscaras de input (telefone) e um painel de controle.
+                    </p>
+                </div>
+
+                <div class="bg-base/50 border border-border p-4 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold">Vindo do Módulo MySQL?</h4>
+                            <p class="text-xs text-muted">Continuaremos usando o mesmo banco.</p>
+                        </div>
+                    </div>
+                    <a href="flask-crud-mysql.html" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Módulo Anterior
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+                        <div class="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i data-lucide="fingerprint" class="text-accent"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2 text-white">Segurança</h3>
+                        <p class="text-sm text-muted">Usaremos <code>Werkzeug Security</code> para criptografar senhas. Nunca salve senhas em texto puro!</p>
+                    </div>
+
+                    <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i data-lucide="user-check" class="text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2 text-white">Validações UX</h3>
+                        <p class="text-sm text-muted">Máscaras de telefone automáticas <code>(11) 99999-9999</code> e feedback visual imediato.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="showStep('step-db')" class="bg-accent hover:bg-violet-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+                        Começar <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-db" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO 1</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Tabela de Usuários</h2>
+                    <p class="text-muted mt-2">Precisamos de um lugar para guardar quem são nossos usuários.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><i data-lucide="table" class="w-4 h-4 text-accent"></i> SQL</h3>
+                    <p class="text-sm text-muted">Execute no seu banco <code>flask_tarefas</code>.</p>
+                    <div class="bg-card rounded-lg border border-border p-0 overflow-hidden">
+                            <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted flex justify-between">
+                                <span>SQL Script</span>
+                                <button onclick="copyToClipboard(this)" class="hover:text-white flex gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                            </div>
+                            <pre class="!border-0"><code class="language-sql"><span class="sql-kw">CREATE TABLE</span> users (
+    id <span class="sql-kw">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    nome <span class="sql-kw">VARCHAR</span>(100) <span class="sql-kw">NOT NULL</span>,
+    email <span class="sql-kw">VARCHAR</span>(100) <span class="sql-kw">NOT NULL UNIQUE</span>,
+    telefone <span class="sql-kw">VARCHAR</span>(20),
+    senha_hash <span class="sql-kw">VARCHAR</span>(255) <span class="sql-kw">NOT NULL</span>,
+    criado_em <span class="sql-kw">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-backend')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Backend <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-backend" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-mono font-bold border border-yellow-500/20">PASSO 2</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Lógica de Autenticação</h2>
+                    <p class="text-muted mt-2">Atualizando o <code>app.py</code> para suportar login e hash de senha.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg relative group">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-yellow-400"></i> app.py (Atualizado)</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                        </div>
+                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-python"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template, request, redirect, session, url_for
+<span class="keyword">import</span> mysql.connector
+<span class="keyword">from</span> werkzeug.security <span class="keyword">import</span> generate_password_hash, check_password_hash
+
+app = Flask(__name__)
+app.secret_key = <span class="string">'CHAVE_SECRETA_SUPER_DIFICIL'</span> <span class="comment"># Necessário para Session</span>
+
+<span class="keyword">def</span> <span class="function">get_db</span>():
+    <span class="keyword">return</span> mysql.connector.connect(host=<span class="string">"localhost"</span>, user=<span class="string">"root"</span>, password=<span class="string">""</span>, database=<span class="string">"flask_tarefas"</span>)
+
+<span class="comment"># --- ROTAS DE AUTENTICAÇÃO ---</span>
+
+@app.route(<span class="string">'/register'</span>, methods=[<span class="string">'GET'</span>, <span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">register</span>():
+    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:
+        nome = request.form[<span class="string">'nome'</span>]
+        email = request.form[<span class="string">'email'</span>]
+        tel = request.form[<span class="string">'telefone'</span>]
+        senha = request.form[<span class="string">'senha'</span>]
+        
+        <span class="comment"># Criptografar senha</span>
+        hash_senha = generate_password_hash(senha)
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        <span class="keyword">try</span>:
+            cursor.execute(<span class="string">"INSERT INTO users (nome, email, telefone, senha_hash) VALUES (%s, %s, %s, %s)"</span>, 
+                           (nome, email, tel, hash_senha))
+            conn.commit()
+            <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))
+        <span class="keyword">except</span>:
+            <span class="keyword">return</span> <span class="string">"Erro: Email já cadastrado!"</span>
+        <span class="keyword">finally</span>:
+            conn.close()
+            
+    <span class="keyword">return</span> render_template(<span class="string">'register.html'</span>)
+
+@app.route(<span class="string">'/login'</span>, methods=[<span class="string">'GET'</span>, <span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">login</span>():
+    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:
+        email = request.form[<span class="string">'email'</span>]
+        senha = request.form[<span class="string">'senha'</span>]
+        
+        conn = get_db()
+        cursor = conn.cursor(dictionary=<span class="keyword">True</span>)
+        cursor.execute(<span class="string">"SELECT * FROM users WHERE email = %s"</span>, (email,))
+        user = cursor.fetchone()
+        conn.close()
+        
+        <span class="keyword">if</span> user <span class="keyword">and</span> check_password_hash(user[<span class="string">'senha_hash'</span>], senha):
+            session[<span class="string">'user_id'</span>] = user[<span class="string">'id'</span>]
+            session[<span class="string">'user_nome'</span>] = user[<span class="string">'nome'</span>]
+            <span class="keyword">return</span> redirect(url_for(<span class="string">'dashboard'</span>))
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> render_template(<span class="string">'login.html'</span>, error=<span class="string">"Credenciais inválidas"</span>)
+            
+    <span class="keyword">return</span> render_template(<span class="string">'login.html'</span>)
+
+@app.route(<span class="string">'/logout'</span>)
+<span class="keyword">def</span> <span class="function">logout</span>():
+    session.clear()
+    <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))
+
+<span class="comment"># --- ÁREA PRIVADA ---</span>
+
+@app.route(<span class="string">'/dashboard'</span>)
+<span class="keyword">def</span> <span class="function">dashboard</span>():
+    <span class="keyword">if</span> <span class="string">'user_id'</span> <span class="keyword">not</span> <span class="keyword">in</span> session:
+        <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))
+    <span class="keyword">return</span> render_template(<span class="string">'dashboard.html'</span>, nome=session[<span class="string">'user_nome'</span>])
+
+@app.route(<span class="string">'/perfil'</span>, methods=[<span class="string">'GET'</span>, <span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">perfil</span>():
+    <span class="keyword">if</span> <span class="string">'user_id'</span> <span class="keyword">not</span> <span class="keyword">in</span> session: <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))
+    
+    conn = get_db()
+    cursor = conn.cursor(dictionary=<span class="keyword">True</span>)
+    
+    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:
+        novo_nome = request.form[<span class="string">'nome'</span>]
+        novo_tel = request.form[<span class="string">'telefone'</span>]
+        cursor.execute(<span class="string">"UPDATE users SET nome=%s, telefone=%s WHERE id=%s"</span>, 
+                       (novo_nome, novo_tel, session[<span class="string">'user_id'</span>]))
+        conn.commit()
+        session[<span class="string">'user_nome'</span>] = novo_nome <span class="comment"># Atualiza sessão</span>
+    
+    cursor.execute(<span class="string">"SELECT * FROM users WHERE id = %s"</span>, (session[<span class="string">'user_id'</span>],))
+    user = cursor.fetchone()
+    conn.close()
+    
+    <span class="keyword">return</span> render_template(<span class="string">'perfil.html'</span>, user=user)
+
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    app.run(debug=<span class="keyword">True</span>)</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-db')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-login')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Telas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-login" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-mono font-bold border border-pink-500/20">PASSO 3</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Login & Cadastro</h2>
+                    <p class="text-muted mt-2">Design minimalista com máscaras JS e animações.</p>
+                </div>
+
+                <div class="space-y-6">
+                    
+                    <div class="space-y-2">
+                        <h3 class="text-white font-bold text-sm">templates/login.html</h3>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Login&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-900 h-screen flex items-center justify-center p-4"&gt;
+    &lt;div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-[fade-in_0.5s_ease-out]"&gt;
+        &lt;h2 class="text-2xl font-bold text-white mb-6 text-center"&gt;Bem-vindo de volta 👋&lt;/h2&gt;
+        
+        {% if error %}
+            &lt;div class="bg-red-500/20 text-red-400 p-3 rounded mb-4 text-sm text-center"&gt;{{ error }}&lt;/div&gt;
+        {% endif %}
+
+        &lt;form action="/login" method="POST" class="space-y-4"&gt;
+            &lt;div&gt;
+                &lt;label class="block text-slate-400 text-sm mb-1"&gt;Email&lt;/label&gt;
+                &lt;input type="email" name="email" required 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none transition"&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;label class="block text-slate-400 text-sm mb-1"&gt;Senha&lt;/label&gt;
+                &lt;input type="password" name="senha" required 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none transition"&gt;
+            &lt;/div&gt;
+            &lt;button class="w-full bg-violet-600 hover:bg-violet-500 text-white p-3 rounded-lg font-bold transition transform hover:scale-[1.02]"&gt;
+                Entrar
+            &lt;/button&gt;
+        &lt;/form&gt;
+        &lt;p class="text-center text-slate-500 text-sm mt-6"&gt;
+            Não tem conta? &lt;a href="/register" class="text-violet-400 hover:underline"&gt;Crie agora&lt;/a&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-white font-bold text-sm">templates/register.html (Com Máscara JS)</h3>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Cadastro&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-900 h-screen flex items-center justify-center p-4"&gt;
+    &lt;div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-[slide-up_0.5s_ease-out]"&gt;
+        &lt;h2 class="text-2xl font-bold text-white mb-2 text-center"&gt;Criar Conta 🚀&lt;/h2&gt;
+        &lt;p class="text-slate-400 text-center mb-6 text-sm"&gt;Junte-se a nós para gerenciar suas tarefas&lt;/p&gt;
+
+        &lt;form action="/register" method="POST" class="space-y-3"&gt;
+            &lt;input type="text" name="nome" placeholder="Seu Nome" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none"&gt;
+            &lt;input type="email" name="email" placeholder="seu@email.com" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none"&gt;
+            
+            &lt;!-- Campo Telefone com ID para o JS --&gt;
+            &lt;input type="text" name="telefone" id="telefone" placeholder="(11) 99999-9999" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none"&gt;
+            
+            &lt;input type="password" name="senha" placeholder="Senha Forte" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none"&gt;
+            
+            &lt;button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-lg font-bold transition mt-4"&gt;Cadastrar&lt;/button&gt;
+        &lt;/form&gt;
+        
+        &lt;p class="text-center text-slate-500 text-sm mt-4"&gt;
+            Já tem conta? &lt;a href="/login" class="text-violet-400 hover:underline"&gt;Faça Login&lt;/a&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- MÁSCARA DE TELEFONE --&gt;
+    &lt;script&gt;
+        const inputTel = document.getElementById('telefone');
+        inputTel.addEventListener('input', (e) =&gt; {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-backend')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-dashboard')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-dashboard" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs font-mono font-bold border border-orange-500/20">PASSO 4</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Dashboard & Perfil</h2>
+                    <p class="text-muted mt-2">Área logada e edição de dados do usuário.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-card rounded-lg border border-border p-4">
+                        <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i data-lucide="layout" class="w-4 h-4 text-orange-400"></i> templates/dashboard.html</h3>
+                        <p class="text-xs text-muted mb-3">Estrutura básica com menu lateral.</p>
+                        <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body class="bg-slate-900 text-slate-200 flex h-screen overflow-hidden"&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+    
+    &lt;!-- SIDEBAR --&gt;
+    &lt;aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col"&gt;
+        <div class="p-6 text-xl font-bold text-white">DashApp</div>
+        <nav class="flex-1 p-4 space-y-2"&gt;
+            &lt;a href="/dashboard" class="block bg-violet-600 text-white p-3 rounded"&gt;🏠 Início&lt;/a&gt;
+            &lt;a href="/perfil" class="block hover:bg-slate-700 text-slate-300 p-3 rounded"&gt;👤 Meu Perfil&lt;/a&gt;
+            &lt;a href="#" class="block hover:bg-slate-700 text-slate-300 p-3 rounded opacity-50"&gt;📊 Gráficos (Em breve)&lt;/a&gt;
+        </nav&gt;
+        <div class="p-4 border-t border-slate-700"&gt;
+            &lt;a href="/logout" class="block text-red-400 hover:text-red-300"&gt;Sair&lt;/a&gt;
+        </div>
+    &lt;/aside&gt;
+
+    &lt;!-- MAIN CONTENT --&gt;
+    &lt;main class="flex-1 p-8 overflow-y-auto"&gt;
+        &lt;h1 class="text-3xl font-bold text-white mb-6"&gt;Olá, {{ nome }}!&lt;/h1&gt;
+        
+        &lt;div class="grid grid-cols-1 md:grid-cols-3 gap-6"&gt;
+            &lt;!-- Placeholder para cards --&gt;
+            &lt;div class="bg-slate-800 p-6 rounded-xl border border-slate-700"&gt;
+                &lt;h3 class="text-slate-400 text-sm uppercase"&gt;Tarefas Pendentes&lt;/h3&gt;
+                &lt;p class="text-3xl font-bold text-white mt-2"&gt;0&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="mt-8 bg-blue-500/10 border border-blue-500/20 p-6 rounded-xl"&gt;
+            &lt;h2 class="text-xl font-bold text-blue-400 mb-2"&gt;Próximo Módulo&lt;/h2&gt;
+            &lt;p&gt;Aqui é onde listaremos suas tarefas e gráficos. Por enquanto, configure seu perfil!&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border p-4">
+                        <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i data-lucide="user-cog" class="w-4 h-4 text-orange-400"></i> templates/perfil.html</h3>
+                        <p class="text-xs text-muted mb-3">Formulário para editar dados.</p>
+                        <pre class="!border-0"><code class="language-html">&lt;!-- Use a mesma estrutura de Sidebar do Dashboard --&gt;
+&lt;main class="flex-1 p-8"&gt;
+    &lt;h1 class="text-2xl font-bold text-white mb-6"&gt;Editar Perfil&lt;/h1&gt;
+    
+    &lt;form method="POST" class="max-w-md space-y-4"&gt;
+        &lt;div&gt;
+            &lt;label class="block text-slate-400 mb-1"&gt;Nome&lt;/label&gt;
+            &lt;input type="text" name="nome" value="{{ user.nome }}" class="w-full bg-slate-800 border border-slate-700 p-3 rounded text-white"&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+            &lt;label class="block text-slate-400 mb-1"&gt;Telefone&lt;/label&gt;
+            &lt;input type="text" name="telefone" id="telefone" value="{{ user.telefone }}" class="w-full bg-slate-800 border border-slate-700 p-3 rounded text-white"&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+            &lt;label class="block text-slate-400 mb-1"&gt;Email (Não editável)&lt;/label&gt;
+            &lt;input type="text" value="{{ user.email }}" disabled class="w-full bg-slate-800/50 border border-slate-700 p-3 rounded text-slate-500 cursor-not-allowed"&gt;
+        &lt;/div&gt;
+        &lt;button class="bg-violet-600 text-white px-6 py-2 rounded font-bold"&gt;Salvar Alterações&lt;/button&gt;
+    &lt;/form&gt;
+    
+    &lt;!-- Reutilize o script de máscara aqui --&gt;
+&lt;/main&gt;</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6 pb-20">
+                    <button onclick="showStep('step-login')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-intro')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">Módulo Concluído <i data-lucide="check-circle" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const content = document.getElementById(stepId);
+            content.classList.remove('active');
+            void content.offsetWidth;
+            content.classList.add('active');
+
+            document.querySelector('main').scrollTop = 0;
+
+            const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const parent = button.closest('.rounded-lg');
+            const codeBlock = parent.querySelector('code');
+            const code = codeBlock.innerText;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Copiado!`;
+                button.classList.add('text-emerald-400');
+                lucide.createIcons();
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('text-emerald-400');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

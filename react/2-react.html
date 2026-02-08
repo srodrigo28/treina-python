@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>React Nível 2: Estado e Eventos</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: "var(--color-base)",
+            accent: "var(--color-accent)",
+            text: "var(--color-text)",
+            muted: "var(--color-muted)",
+            card: "var(--color-card)",
+            border: "var(--color-border)",
+            react: "#61dafb", 
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --color-base: #0f172a;      /* bg-slate-900 */
+      --color-accent: #f43f5e;    /* Rose-500 (Para o Like) */
+      --color-text: #f8fafc;
+      --color-muted: #94a3b8;
+      --color-card: #1e293b;
+      --color-border: #334155;
+    }
+
+    .bg-pattern {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+        radial-gradient(circle at 20px 20px, rgba(244, 63, 94, 0.05) 1px, transparent 0);
+      background-size: 32px 32px, 32px 32px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-base); }
+    ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+    pre {
+      background-color: #0d1117;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      margin: 0;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+    }
+
+    .step-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .step-content.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-item.active {
+      background-color: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+    
+    /* Syntax Highlighting */
+    .keyword { color: #ff79c6; }
+    .component { color: #f1fa8c; } 
+    .hook { color: #8be9fd; }
+    .string { color: #50fa7b; }
+    .comment { color: #6272a4; font-style: italic; }
+    .css-sel { color: #f1fa8c; }
+    .css-prop { color: #8be9fd; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+  <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+    <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+      <div class="flex items-center gap-2 mb-1">
+        <i data-lucide="heart" class="text-accent w-6 h-6 animate-pulse"></i>
+        <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-red-500">
+          React Lv.2
+        </h1>
+      </div>
+      <p class="text-xs text-muted">Estado & Componentes</p>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <button onclick="showStep('step-intro')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+        <span class="font-medium">O Desafio</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="terminal" class="w-3 h-3"></i> Configuração
+      </div>
+
+      <button onclick="showStep('step-setup')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+        <span>Criar Projeto</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="code" class="w-3 h-3"></i> Mão na Massa
+      </div>
+
+      <button onclick="showStep('step-logic')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+        <span>Lógica do Estado</span>
+      </button>
+
+      <button onclick="showStep('step-component')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+        <span>Componente Like</span>
+      </button>
+
+      <button onclick="showStep('step-app')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
+        <span>Montagem & CSS</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-border bg-base/30">
+      <div class="flex items-center justify-between text-xs text-muted">
+        <span>v1.0 Hooks</span>
+        <span class="px-2 py-0.5 rounded bg-accent/20 text-green-300 tracking-wider border border-white">useState</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+    <div class="max-w-5xl mx-auto pb-20">
+
+      <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+        <div class="border-b border-border pb-6">
+          <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Nível 2
+          </span>
+          <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Interatividade com State</h2>
+          <p class="text-lg text-muted leading-relaxed max-w-2xl">
+            Sites estáticos são chatos. No React, usamos o <strong>Estado (State)</strong> para fazer a tela reagir aos cliques do usuário sem recarregar a página.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+            <div class="w-12 h-12 rounded-lg bg-rose-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="heart" class="text-accent w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 text-white">Contador de Likes</h3>
+            <p class="text-sm text-muted">Vamos criar um botão que conta cliques. Parece simples, mas é a base de todo sistema reativo (Facebook, Instagram, Twitter).</p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+            <div class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="refresh-cw" class="text-blue-400 w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 text-white">Variáveis vs State</h3>
+            <p class="text-sm text-muted">Em JS normal, mudar uma variável não muda a tela. No React, mudar o <strong>State</strong> força o componente a se redesenhar.</p>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+          <button onclick="showStep('step-setup')"
+            class="bg-accent hover:bg-rose-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+            Iniciar Projeto <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="step-setup" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono font-bold border border-blue-500/20">PASSO 1</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Criando o Projeto</h2>
+          <p class="text-muted mt-2">Usaremos o Vite com template React (JSX puro).</p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+            <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+              <span>Terminal</span>
+              <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+            </div>
+            <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash"># 1. Criar o projeto
+npm create vite@latest nivel2-likes -- --template react
+
+# 2. Entrar na pasta
+cd nivel2-likes
+
+# 3. Instalar dependências
+npm install
+
+# 4. Abrir no VS Code
+code .</code></pre>
+          </div>
+
+          <div class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg text-sm text-blue-400 flex gap-2">
+             <i data-lucide="info" class="w-4 h-4 mt-0.5"></i>
+             <span>Dica: Apague todo o conteúdo de <code>src/App.css</code> e <code>src/App.jsx</code> para começarmos do zero.</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-logic')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Lógica <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-logic" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-mono font-bold border border-yellow-500/20">PASSO 2</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">A Mágica do useState</h2>
+          <p class="text-muted mt-2">Antes de codar, entenda como o contador vai funcionar.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <h3 class="text-white font-bold">Estrutura do Hook</h3>
+                <div class="bg-card rounded-lg border border-border p-4">
+                    <pre class="!bg-transparent !border-0 !p-0"><code class="language-jsx"><span class="keyword">const</span> [<span class="hook">likes</span>, <span class="hook">setLikes</span>] = <span class="hook">useState</span>(0);</code></pre>
+                </div>
+                <ul class="space-y-2 text-sm text-muted">
+                    <li><strong class="text-hook">likes:</strong> É a variável que guarda o valor atual (ex: 0, 1, 50).</li>
+                    <li><strong class="text-hook">setLikes:</strong> É a função "gatilho". Só ela pode mudar o valor de <code>likes</code>.</li>
+                    <li><strong class="text-hook">useState(0):</strong> Define que o valor inicial é zero.</li>
+                </ul>
+            </div>
+            
+            <div class="space-y-4">
+                <h3 class="text-white font-bold">A Função de Somar</h3>
+                <div class="bg-card rounded-lg border border-border p-4">
+                    <pre class="!bg-transparent !border-0 !p-0"><code class="language-jsx"><span class="keyword">function</span> <span class="component">adicionarLike</span>() {
+  <span class="comment">// Pega o valor atual e soma +1</span>
+  <span class="hook">setLikes</span>(<span class="hook">likes</span> + 1);
+}</code></pre>
+                </div>
+                <p class="text-sm text-muted">Ao chamar <code>setLikes</code>, o React pensa: "Opa, dados mudaram! Preciso atualizar a tela agora mesmo".</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-setup')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-component')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Componente <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-component" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-mono font-bold border border-purple-500/20">PASSO 3</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Criando o Botão</h2>
+          <p class="text-muted mt-2">Crie um arquivo novo chamado <code>src/LikeButton.jsx</code>.</p>
+        </div>
+
+        <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+            <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+              <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-purple-400"></i> src/LikeButton.jsx</span>
+              <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+            </div>
+            <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-jsx"><span class="keyword">import</span> { <span class="hook">useState</span> } <span class="keyword">from</span> <span class="string">'react'</span>;
+
+<span class="keyword">export function</span> <span class="component">LikeButton</span>() {
+  <span class="comment">// 1. Criando o estado</span>
+  <span class="keyword">const</span> [<span class="hook">likes</span>, <span class="hook">setLikes</span>] = <span class="hook">useState</span>(0);
+
+  <span class="comment">// 2. Retornando o HTML (JSX)</span>
+  <span class="keyword">return</span> (
+    &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"like-wrapper"</span>&gt;
+      &lt;<span class="component">button</span> 
+        <span class="keyword">className</span>={<span class="string">`like-btn ${likes > 0 ? 'ativo' : ''}`</span>}
+        <span class="keyword">onClick</span>={() => <span class="hook">setLikes</span>(<span class="hook">likes</span> + 1)}
+      &gt;
+        &lt;<span class="component">span</span>&gt;❤️&lt;/<span class="component">span</span>&gt;
+        &lt;<span class="component">strong</span>&gt;{<span class="hook">likes</span>}&lt;/<span class="component">strong</span>&gt;
+      &lt;/<span class="component">button</span>&gt;
+      &lt;<span class="component">span</span> <span class="keyword">className</span>=<span class="string">"label"</span>&gt;Curtidas&lt;/<span class="component">span</span>&gt;
+    &lt;/<span class="component">div</span>&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-logic')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-app')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: CSS Final <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-app" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO 4</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">A Montagem</h2>
+          <p class="text-muted mt-2">Vamos importar o botão no <code>App.jsx</code> e aplicar um CSS nativo profissional.</p>
+        </div>
+
+        <div class="space-y-2">
+            <h3 class="text-white font-bold text-sm">1. Arquivo: src/App.jsx</h3>
+            <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                    <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-yellow-400"></i> App.jsx</span>
+                    <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                </div>
+                <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-jsx"><span class="keyword">import</span> { <span class="component">LikeButton</span> } <span class="keyword">from</span> <span class="string">'./LikeButton'</span>;
+<span class="keyword">import</span> <span class="string">'./App.css'</span>;
+
+<span class="keyword">export default function</span> <span class="component">App</span>() {
+  <span class="keyword">return</span> (
+    &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"container"</span>&gt;
+      &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"post-card"</span>&gt;
+        
+        {<span class="comment">/* Cabeçalho do Post */</span>}
+        &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"user-info"</span>&gt;
+          &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"avatar"</span>&gt;JS&lt;/<span class="component">div</span>&gt;
+          &lt;<span class="component">div</span>&gt;
+            &lt;<span class="component">h3</span>&gt;João Silva&lt;/<span class="component">h3</span>&gt;
+            &lt;<span class="component">span</span>&gt;@joaosilva • 2h&lt;/<span class="component">span</span>&gt;
+          &lt;/<span class="component">div</span>&gt;
+        &lt;/<span class="component">div</span>&gt;
+
+        {<span class="comment">/* Conteúdo */</span>}
+        &lt;<span class="component">p</span>&gt;
+            Criando meu primeiro componente com estado no React! 🚀 
+            A interatividade é incrível. #reactjs #frontend
+        &lt;/<span class="component">p</span>&gt;
+
+        {<span class="comment">/* Ações (Nosso Componente) */</span>}
+        &lt;<span class="component">div</span> <span class="keyword">className</span>=<span class="string">"actions"</span>&gt;
+          &lt;<span class="component">LikeButton</span> /&gt;
+        &lt;/<span class="component">div</span>&gt;
+
+      &lt;/<span class="component">div</span>&gt;
+    &lt;/<span class="component">div</span>&gt;
+  )
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="space-y-2 mt-6">
+            <h3 class="text-white font-bold text-sm">2. Arquivo: src/App.css</h3>
+            <p class="text-xs text-muted mb-2">Copie este CSS para deixar o visual moderno (Dark Theme).</p>
+            <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                    <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-pink-400"></i> App.css</span>
+                    <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                </div>
+                <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-css"><span class="css-sel">body</span> {
+  <span class="css-prop">background-color</span>: #0f172a;
+  <span class="css-prop">color</span>: #f8fafc;
+  <span class="css-prop">font-family</span>: sans-serif;
+  <span class="css-prop">display</span>: flex;
+  <span class="css-prop">justify-content</span>: center;
+  <span class="css-prop">padding-top</span>: 50px;
+}
+
+<span class="css-sel">.post-card</span> {
+  <span class="css-prop">background</span>: #1e293b;
+  <span class="css-prop">width</span>: 350px;
+  <span class="css-prop">padding</span>: 20px;
+  <span class="css-prop">border-radius</span>: 16px;
+  <span class="css-prop">border</span>: 1px solid #334155;
+  <span class="css-prop">box-shadow</span>: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+<span class="css-sel">.user-info</span> {
+  <span class="css-prop">display</span>: flex;
+  <span class="css-prop">gap</span>: 12px;
+  <span class="css-prop">margin-bottom</span>: 15px;
+  <span class="css-prop">align-items</span>: center;
+}
+
+<span class="css-sel">.avatar</span> {
+  <span class="css-prop">width</span>: 40px;
+  <span class="css-prop">height</span>: 40px;
+  <span class="css-prop">background</span>: #3b82f6;
+  <span class="css-prop">border-radius</span>: 50%;
+  <span class="css-prop">display</span>: grid;
+  <span class="css-prop">place-items</span>: center;
+  <span class="css-prop">font-weight</span>: bold;
+}
+
+<span class="css-sel">.user-info h3</span> { <span class="css-prop">margin</span>: 0; <span class="css-prop">font-size</span>: 1rem; }
+<span class="css-sel">.user-info span</span> { <span class="css-prop">color</span>: #94a3b8; <span class="css-prop">font-size</span>: 0.8rem; }
+
+<span class="css-sel">.actions</span> {
+  <span class="css-prop">margin-top</span>: 20px;
+  <span class="css-prop">padding-top</span>: 15px;
+  <span class="css-prop">border-top</span>: 1px solid #334155;
+}
+
+<span class="comment">/* Estilo do Botão Like */</span>
+<span class="css-sel">.like-wrapper</span> {
+    <span class="css-prop">display</span>: flex;
+    <span class="css-prop">align-items</span>: center;
+    <span class="css-prop">gap</span>: 10px;
+}
+
+<span class="css-sel">.like-btn</span> {
+  <span class="css-prop">background</span>: #334155;
+  <span class="css-prop">border</span>: none;
+  <span class="css-prop">color</span>: white;
+  <span class="css-prop">padding</span>: 8px 16px;
+  <span class="css-prop">border-radius</span>: 20px;
+  <span class="css-prop">cursor</span>: pointer;
+  <span class="css-prop">display</span>: flex;
+  <span class="css-prop">align-items</span>: center;
+  <span class="css-prop">gap</span>: 6px;
+  <span class="css-prop">transition</span>: all 0.2s;
+}
+
+<span class="css-sel">.like-btn:hover</span> { <span class="css-prop">background</span>: #475569; }
+
+<span class="css-sel">.like-btn.ativo</span> {
+  <span class="css-prop">background</span>: #f43f5e;
+  <span class="css-prop">box-shadow</span>: 0 0 10px rgba(244, 63, 94, 0.5);
+  <span class="css-prop">animation</span>: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+<span class="css-sel">@keyframes</span> pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h3 class="text-white font-bold text-sm mb-2">3. Rodar o Projeto</h3>
+            <div class="bg-card rounded-lg border border-border p-4 flex items-center justify-between">
+                <code class="text-emerald-400">npm run dev</code>
+                <span class="text-xs text-muted">Abra o link local no navegador</span>
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6 pb-20">
+            <button onclick="showStep('step-component')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-intro')" class="bg-accent hover:bg-rose-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-accent/20">Finalizar <i data-lucide="check-circle" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Inicializar ícones
+    lucide.createIcons();
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const content = document.getElementById(stepId);
+      content.classList.remove('active');
+      void content.offsetWidth; // Trigger reflow
+      content.classList.add('active');
+
+      document.querySelector('main').scrollTop = 0;
+
+      const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+      if (btn) btn.classList.add('active');
+    }
+
+    function copyToClipboard(button) {
+      const parent = button.closest('.rounded-lg');
+      const codeBlock = parent.querySelector('code');
+      const code = codeBlock.innerText;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const originalContent = button.innerHTML;
+        button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Copiado!`;
+        button.classList.add('text-emerald-400');
+        lucide.createIcons(); 
+
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+          button.classList.remove('text-emerald-400');
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+
+</html>

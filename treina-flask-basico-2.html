@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tutorial: Aplicação Flask Minimalista</title>
+    <title>Tutorial: Flask + MySQL CRUD</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
@@ -29,9 +29,7 @@
     <style>
         :root {
             --color-base: #0f172a;
-            /* bg-slate-900 */
-            --color-accent: #7c3aed;
-            /* bg-violet-600 */
+            --color-accent: #3b82f6; /* Mudamos para Azul (Database vibe) */
             --color-text: #f8fafc;
             --color-muted: #94a3b8;
             --color-card: #1e293b;
@@ -41,28 +39,15 @@
         .bg-pattern {
             background-image:
                 radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
-                radial-gradient(circle at 12px 12px, rgba(124, 58, 237, 0.1) 1px, transparent 0);
-            background-size: 24px 24px, 24px 24px;
+                radial-gradient(circle at 20px 20px, rgba(59, 130, 246, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--color-base);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--color-border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-accent);
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
 
         pre {
             background-color: #0d1117;
@@ -71,7 +56,6 @@
             overflow-x: auto;
             border: 1px solid var(--color-border);
             margin: 0;
-            /* Reset margin for clean layout */
         }
 
         code {
@@ -80,25 +64,12 @@
             color: #e2e8f0;
         }
 
-        .step-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .step-content.active {
-            display: block;
-        }
+        .step-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .step-content.active { display: block; }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .nav-item.active {
@@ -107,22 +78,12 @@
             border-color: var(--color-accent);
         }
 
-        /* Code Highlighting Simples */
-        .keyword {
-            color: #ff79c6;
-        }
-
-        .string {
-            color: #f1fa8c;
-        }
-
-        .comment {
-            color: #6272a4;
-        }
-
-        .function {
-            color: #50fa7b;
-        }
+        /* Syntax Highlighting Fake */
+        .keyword { color: #ff79c6; }
+        .string { color: #f1fa8c; }
+        .comment { color: #6272a4; font-style: italic; }
+        .function { color: #50fa7b; }
+        .sql-kw { color: #8be9fd; font-weight: bold; }
     </style>
 </head>
 
@@ -131,70 +92,47 @@
     <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
         <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
             <div class="flex items-center gap-2 mb-1">
-                <i data-lucide="flask-conical" class="text-accent w-6 h-6"></i>
-                <h1
-                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                    Flask Fast
+                <i data-lucide="database" class="text-accent w-6 h-6"></i>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
+                    Flask DB
                 </h1>
             </div>
-            <p class="text-xs text-muted">Workflow Minimalista</p>
+            <p class="text-xs text-muted">CRUD com MySQL</p>
         </div>
 
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <button onclick="showStep('step-intro')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
-                <span
-                    class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
-                <span class="font-medium">Visão Geral</span>
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+                <span class="font-medium">O Projeto CRUD</span>
             </button>
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="terminal" class="w-3 h-3"></i> Configuração
+                <i data-lucide="server" class="w-3 h-3"></i> Banco de Dados
             </div>
 
-            <button onclick="showStep('step-setup')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
-                <span>Ambiente & Venv</span>
+            <button onclick="showStep('step-db-setup')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+                <span>Setup MySQL</span>
             </button>
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="code-2" class="w-3 h-3"></i> Desenvolvimento
+                <i data-lucide="code" class="w-3 h-3"></i> Backend
             </div>
 
-            <button onclick="showStep('step-backend')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
-                <span>O Backend (app.py)</span>
-            </button>
-
-            <button onclick="showStep('step-frontend')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
-                <span>O Frontend (HTML)</span>
+            <button onclick="showStep('step-backend')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Lógica (app.py)</span>
             </button>
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="play" class="w-3 h-3"></i> Execução
+                <i data-lucide="layout" class="w-3 h-3"></i> Interface
             </div>
 
-            <button onclick="showStep('step-run')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
-                <span>Rodando o App</span>
+            <button onclick="showStep('step-frontend')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+                <span>HTML + Filtros</span>
             </button>
         </nav>
-
-        <div class="p-4 border-t border-border bg-base/30">
-            <div class="flex items-center justify-between text-xs text-muted">
-                <span>v1.0 Minimalista</span>
-                <span class="px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/20">Básico</span>
-            </div>
-        </div>
     </aside>
 
     <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
@@ -203,347 +141,305 @@
             <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
                 <div class="border-b border-border pb-6">
                     <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
-                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Módulo Introdutório
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Nível 2
                     </span>
-                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Fluxo Flask
-                        Minimalista</h2>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Gerenciador de Tarefas</h2>
                     <p class="text-lg text-muted leading-relaxed max-w-2xl">
-                        Aprenda a criar uma aplicação web Python do zero absoluto. Sem excessos, apenas o essencial para
-                        capturar dados e renderizar páginas.
+                        Vamos evoluir sua aplicação Flask. Deixaremos de usar dados voláteis e conectaremos um banco <strong>MySQL</strong> real para criar um sistema completo de tarefas.
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div
-                        class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
-                        <div
-                            class="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <i data-lucide="target" class="text-accent"></i>
+                <div class="bg-base/50 border border-border p-4 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400">
+                            <i data-lucide="history" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2 text-white">Objetivo</h3>
-                        <p class="text-sm text-muted">Criar um formulário web funcional que recebe o nome do usuário e
-                            exibe uma mensagem de boas-vindas.</p>
+                        <div>
+                            <h4 class="text-white font-bold">Perdeu o começo?</h4>
+                            <p class="text-xs text-muted">Volte para o tutorial de configuração básica.</p>
+                        </div>
+                    </div>
+                    <a href="flask-tutorial-basico.html" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-bold rounded-lg transition shadow-lg shadow-violet-500/20 flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Passo Anterior
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+                        <div class="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i data-lucide="database" class="text-accent"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2 text-white">Banco de Dados</h3>
+                        <p class="text-sm text-muted">MySQL para persistir os dados. Mesmo se reiniciar o servidor, as tarefas continuam lá.</p>
                     </div>
 
-                    <div
-                        class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
-                        <div
-                            class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <i data-lucide="layers" class="text-emerald-400"></i>
+                    <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i data-lucide="filter" class="text-emerald-400"></i>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2 text-white">Tecnologias</h3>
-                        <ul class="space-y-2 text-sm text-muted">
-                            <li class="flex items-center gap-2"><i data-lucide="check-circle"
-                                    class="w-4 h-4 text-emerald-500"></i> Python 3+</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check-circle"
-                                    class="w-4 h-4 text-emerald-500"></i> Flask (Microframework)</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check-circle"
-                                    class="w-4 h-4 text-emerald-500"></i> Jinja2 (Templates)</li>
-                        </ul>
+                        <h3 class="text-lg font-semibold mb-2 text-white">Filtros & Busca</h3>
+                        <p class="text-sm text-muted">Não é só listar. Vamos filtrar por categoria e buscar tarefas por texto.</p>
                     </div>
                 </div>
 
                 <div class="mt-8 flex justify-end">
-                    <button onclick="showStep('step-setup')"
-                        class="bg-accent hover:bg-violet-500 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
-                        Iniciar Configuração <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    <button onclick="showStep('step-db-setup')" class="bg-accent hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+                        Configurar Banco <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="step-setup" class="step-content space-y-8">
+            <div id="step-db-setup" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
                     <div class="flex items-center gap-3 mb-2">
-                        <span
-                            class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono font-bold border border-blue-500/20">PASSO
-                            1</span>
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO 1</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-white">Preparando o Terreno</h2>
-                    <p class="text-muted mt-2">Criação da pasta do projeto e isolamento com ambiente virtual.</p>
+                    <h2 class="text-3xl font-bold text-white">Preparando o MySQL</h2>
+                    <p class="text-muted mt-2">Instalação do driver e criação da tabela.</p>
                 </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold text-white flex items-center gap-2">
-                        <i data-lucide="folder-plus" class="text-accent w-5 h-5"></i> 1. Criar Pasta e Venv
-                    </h3>
-                    <p class="text-muted text-sm">Abra seu terminal e execute os comandos abaixo para organizar o
-                        projeto.</p>
-
-                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
-                        <div
-                            class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
-                            <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3 h-3"></i>
-                                Terminal</span>
-                            <button onclick="copyToClipboard(this)"
-                                class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy"
-                                    class="w-3 h-3"></i> Copiar</button>
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <h3 class="text-white font-bold flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-accent"></i> 1. Instalar Conector</h3>
+                        <div class="bg-card rounded-lg border border-border p-0 overflow-hidden">
+                            <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal (com venv ativado)</div>
+                            <pre class="!border-0"><code class="language-bash">pip install mysql-connector-python</code></pre>
                         </div>
-                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash"># Criar e entrar na pasta
-mkdir meu_projeto
-cd meu_projeto
-
-# Criar ambiente virtual
-python -m venv venv</code></pre>
                     </div>
-                </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold text-white flex items-center gap-2">
-                        <i data-lucide="power" class="text-emerald-400 w-5 h-5"></i> 2. Ativar e Instalar
-                    </h3>
-                    <p class="text-muted text-sm">Ative o ambiente isolado e instale o Flask.</p>
+                    <div class="space-y-2">
+                        <h3 class="text-white font-bold flex items-center gap-2"><i data-lucide="table" class="w-4 h-4 text-accent"></i> 2. Estrutura da Tabela</h3>
+                        <p class="text-sm text-muted">Execute este SQL no seu gerenciador (PHPMyAdmin, Workbench ou DBeaver).</p>
+                        <div class="bg-card rounded-lg border border-border p-0 overflow-hidden">
+                             <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted flex justify-between">
+                                 <span>SQL</span>
+                                 <button onclick="copyToClipboard(this)" class="hover:text-white flex gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                             </div>
+                             <pre class="!border-0"><code class="language-sql"><span class="sql-kw">CREATE DATABASE</span> flask_tarefas;
+<span class="sql-kw">USE</span> flask_tarefas;
 
-                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
-                        <div
-                            class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
-                            <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3 h-3"></i>
-                                Terminal</span>
-                            <button onclick="copyToClipboard(this)"
-                                class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy"
-                                    class="w-3 h-3"></i> Copiar</button>
+<span class="sql-kw">CREATE TABLE</span> tarefas (
+    id <span class="sql-kw">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    descricao <span class="sql-kw">VARCHAR</span>(255) <span class="sql-kw">NOT NULL</span>,
+    categoria <span class="sql-kw">VARCHAR</span>(50),
+    feito <span class="sql-kw">BOOLEAN DEFAULT FALSE</span>,
+    data_criacao <span class="sql-kw">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+);</code></pre>
                         </div>
-                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash"># Windows
-venv\Scripts\activate
-
-# Linux / Mac
-source venv/bin/activate
-
-# Instalar Flask
-pip install flask</code></pre>
-                    </div>
-                    <div
-                        class="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg text-xs text-emerald-400 flex gap-2">
-                        <i data-lucide="info" class="w-4 h-4 mt-0.5"></i>
-                        <span>Dica: Você saberá que funcionou se aparecer <strong>(venv)</strong> no início da linha do
-                            terminal.</span>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-intro')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-backend')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Backend <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-backend')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Backend <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
             <div id="step-backend" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
                     <div class="flex items-center gap-3 mb-2">
-                        <span
-                            class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-mono font-bold border border-violet-500/20">PASSO
-                            2</span>
+                        <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-mono font-bold border border-yellow-500/20">PASSO 2</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-white">O Cérebro da Aplicação</h2>
-                    <p class="text-muted mt-2">Criando o arquivo <code>app.py</code> com rotas e validações.</p>
+                    <h2 class="text-3xl font-bold text-white">Lógica de Servidor</h2>
+                    <p class="text-muted mt-2">Conexão, rotas de Adicionar, Editar, Filtrar e Deletar.</p>
                 </div>
 
                 <div class="space-y-4">
                     <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg relative group">
-                        <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-yellow-400"></i> app.py</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
                         </div>
-                        <div
-                            class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
-                            <span class="flex items-center gap-2"><i data-lucide="file-code"
-                                    class="w-3 h-3 text-yellow-400"></i> app.py</span>
-                            <button onclick="copyToClipboard(this)"
-                                class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy"
-                                    class="w-3 h-3"></i> Copiar</button>
-                        </div>
-                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-python"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template, request
+                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-python"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template, request, redirect
+<span class="keyword">import</span> mysql.connector
 
 app = Flask(__name__)
 
-<span class="comment"># ROTA PRINCIPAL: Renderiza e Processa</span>
-@app.route(<span class="string">'/'</span>, methods=[<span class="string">'GET'</span>, <span class="string">'POST'</span>])
-<span class="keyword">def</span> <span class="function">index</span>():
-    mensagem = <span class="string">''</span>
-    
-    <span class="comment"># Se enviou o formulário</span>
-    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:
-        nome = request.form.get(<span class="string">'nome_usuario'</span>)
-        
-        <span class="comment"># Validação simples</span>
-        <span class="keyword">if not</span> nome:
-            mensagem = <span class="string">"⚠️ Erro: Nome vazio!"</span>
-        <span class="keyword">else</span>:
-            mensagem = f<span class="string">"✅ Olá, {nome}!"</span>
+<span class="comment"># Configuração do Banco (Ajuste a senha)</span>
+<span class="keyword">def</span> <span class="function">get_db_connection</span>():
+    <span class="keyword">return</span> mysql.connector.connect(
+        host=<span class="string">"localhost"</span>,
+        user=<span class="string">"root"</span>,
+        password=<span class="string">""</span>,
+        database=<span class="string">"flask_tarefas"</span>
+    )
 
-    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, msg=mensagem)
+<span class="comment"># ROTA PRINCIPAL: Listar com Filtro e Busca</span>
+@app.route(<span class="string">'/'</span>)
+<span class="keyword">def</span> <span class="function">index</span>():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=<span class="keyword">True</span>)
+    
+    <span class="comment"># Captura filtros da URL (?busca=x&categoria=y)</span>
+    busca = request.args.get(<span class="string">'busca'</span>)
+    filtro_cat = request.args.get(<span class="string">'categoria'</span>)
+
+    sql = <span class="string">"SELECT * FROM tarefas WHERE 1=1"</span>
+    params = []
+
+    <span class="keyword">if</span> busca:
+        sql += <span class="string">" AND descricao LIKE %s"</span>
+        params.append(f<span class="string">"%{busca}%"</span>)
+    
+    <span class="keyword">if</span> filtro_cat:
+        sql += <span class="string">" AND categoria = %s"</span>
+        params.append(filtro_cat)
+
+    sql += <span class="string">" ORDER BY id DESC"</span>
+    
+    cursor.execute(sql, params)
+    tarefas = cursor.fetchall()
+    
+    conn.close()
+    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, tarefas=tarefas)
+
+<span class="comment"># ADICIONAR TAREFA</span>
+@app.route(<span class="string">'/add'</span>, methods=[<span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">add</span>():
+    desc = request.form.get(<span class="string">'descricao'</span>)
+    cat = request.form.get(<span class="string">'categoria'</span>)
+    
+    <span class="keyword">if</span> desc:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(<span class="string">"INSERT INTO tarefas (descricao, categoria) VALUES (%s, %s)"</span>, (desc, cat))
+        conn.commit()
+        conn.close()
+    
+    <span class="keyword">return</span> redirect(<span class="string">'/'</span>)
+
+<span class="comment"># MARCAR COMO FEITO / DESFEITO</span>
+@app.route(<span class="string">'/toggle/<int:id>'</span>)
+<span class="keyword">def</span> <span class="function">toggle</span>(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    <span class="comment"># Inverte o valor booleano</span>
+    cursor.execute(<span class="string">"UPDATE tarefas SET feito = NOT feito WHERE id = %s"</span>, (id,))
+    conn.commit()
+    conn.close()
+    <span class="keyword">return</span> redirect(<span class="string">'/'</span>)
+
+<span class="comment"># DELETAR TAREFA</span>
+@app.route(<span class="string">'/delete/<int:id>'</span>)
+<span class="keyword">def</span> <span class="function">delete</span>(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(<span class="string">"DELETE FROM tarefas WHERE id = %s"</span>, (id,))
+    conn.commit()
+    conn.close()
+    <span class="keyword">return</span> redirect(<span class="string">'/'</span>)
 
 <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
     app.run(debug=<span class="keyword">True</span>)</code></pre>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4 mt-4">
-                        <div class="p-4 bg-card border border-border rounded-lg">
-                            <h4 class="text-sm font-bold text-white mb-1">request.form.get</h4>
-                            <p class="text-xs text-muted">Captura o dado enviado pelo input HTML através do atributo
-                                'name'.</p>
-                        </div>
-                        <div class="p-4 bg-card border border-border rounded-lg">
-                            <h4 class="text-sm font-bold text-white mb-1">render_template</h4>
-                            <p class="text-xs text-muted">Carrega o arquivo HTML e injeta variáveis (como 'msg') nele.
-                            </p>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-setup')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-frontend')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Frontend <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-db-setup')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-frontend')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Frontend <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
             <div id="step-frontend" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
                     <div class="flex items-center gap-3 mb-2">
-                        <span
-                            class="px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-mono font-bold border border-pink-500/20">PASSO
-                            3</span>
+                        <span class="px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-mono font-bold border border-pink-500/20">PASSO 3</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-white">O Rosto da Aplicação</h2>
-                    <p class="text-muted mt-2">O arquivo HTML precisa ficar dentro de uma pasta chamada
-                        <code>templates</code>.</p>
+                    <h2 class="text-3xl font-bold text-white">Interface Unificada</h2>
+                    <p class="text-muted mt-2">Cadastro, Busca e Listagem na mesma tela com Tailwind.</p>
                 </div>
 
                 <div class="space-y-4">
-                    <div
-                        class="bg-base/50 p-4 rounded-lg border border-border border-dashed flex items-center gap-4 text-sm text-muted mb-4">
+                    <div class="bg-base/50 p-4 rounded-lg border border-border border-dashed flex items-center gap-4 text-sm text-muted mb-4">
                         <i data-lucide="folder-tree" class="text-accent"></i>
                         <span>meu_projeto / <strong>templates</strong> / index.html</span>
                     </div>
 
                     <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
-                        <div
-                            class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
-                            <span class="flex items-center gap-2"><i data-lucide="file-code"
-                                    class="w-3 h-3 text-orange-400"></i> templates/index.html</span>
-                            <button onclick="copyToClipboard(this)"
-                                class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy"
-                                    class="w-3 h-3"></i> Copiar</button>
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-3 h-3 text-orange-400"></i> index.html</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
                         </div>
-                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-html"><span class="comment">&lt;!-- Estrutura Simples --&gt;</span>
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-    &lt;h2&gt;Formulário Flask&lt;/h2&gt;
+                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-br"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Task Manager&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-900 text-slate-200 p-8 font-sans"&gt;
 
-    <span class="comment">&lt;!-- Lógica do Jinja2 para exibir msg se existir --&gt;</span>
-    {% if msg %}
-        &lt;div style="background:#eee; padding:10px; margin-bottom:10px;"&gt;
-            {{ msg }}
+    &lt;div class="max-w-2xl mx-auto"&gt;
+        &lt;h1 class="text-3xl font-bold mb-6 text-white"&gt;📋 Minhas Tarefas&lt;/h1&gt;
+
+        &lt;!-- FORMULÁRIO DE CADASTRO --&gt;
+        &lt;div class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-8"&gt;
+            &lt;form action="/add" method="POST" class="flex gap-2"&gt;
+                &lt;input type="text" name="descricao" placeholder="Nova tarefa..." required
+                       class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-white focus:outline-none focus:border-blue-500"&gt;
+                
+                &lt;select name="categoria" class="bg-slate-900 border border-slate-700 rounded p-2 text-white"&gt;
+                    &lt;option value="Trabalho"&gt;Trabalho&lt;/option&gt;
+                    &lt;option value="Pessoal"&gt;Pessoal&lt;/option&gt;
+                    &lt;option value="Estudo"&gt;Estudo&lt;/option&gt;
+                &lt;/select&gt;
+
+                &lt;button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold"&gt;+&lt;/button&gt;
+            &lt;/form&gt;
         &lt;/div&gt;
-    {% endif %}
 
-    <span class="comment">&lt;!-- Formulário envia para a mesma rota '/' --&gt;</span>
-    &lt;form method="POST" action="/"&gt;
-        &lt;label&gt;Nome:&lt;/label&gt;
-        &lt;input type="text" name="nome_usuario" placeholder="Digite..."&gt;
-        &lt;button type="submit"&gt;Enviar&lt;/button&gt;
-    &lt;/form&gt;
+        &lt;!-- BARRA DE PESQUISA --&gt;
+        &lt;form action="/" method="GET" class="flex gap-2 mb-6"&gt;
+            &lt;input type="text" name="busca" placeholder="🔍 Pesquisar..." 
+                   class="flex-1 bg-transparent border-b border-slate-700 p-2 focus:outline-none focus:border-blue-500"&gt;
+            &lt;select name="categoria" onchange="this.form.submit()" class="bg-transparent border-b border-slate-700 p-2 text-slate-400"&gt;
+                &lt;option value=""&gt;Todas Categorias&lt;/option&gt;
+                &lt;option value="Trabalho"&gt;Trabalho&lt;/option&gt;
+                &lt;option value="Pessoal"&gt;Pessoal&lt;/option&gt;
+                &lt;option value="Estudo"&gt;Estudo&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;button type="submit" class="hidden"&gt;Filtrar&lt;/button&gt;
+        &lt;/form&gt;
+
+        &lt;!-- LISTA DE TAREFAS --&gt;
+        &lt;div class="space-y-3"&gt;
+            {% for tarefa in tarefas %}
+            &lt;div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg border border-slate-700 hover:border-slate-600 transition"&gt;
+                &lt;div class="flex items-center gap-3"&gt;
+                    &lt;!-- Checkbox (Toggle) --&gt;
+                    &lt;a href="/toggle/{{ tarefa.id }}" 
+                       class="w-6 h-6 rounded-full border-2 flex items-center justify-center 
+                              {{ 'bg-green-500 border-green-500' if tarefa.feito else 'border-slate-500 hover:border-white' }}"&gt;
+                        {% if tarefa.feito %}✓{% endif %}
+                    &lt;/a&gt;
+                    
+                    &lt;div&gt;
+                        &lt;p class="{{ 'line-through text-slate-500' if tarefa.feito else 'text-white' }}"&gt;
+                            {{ tarefa.descricao }}
+                        &lt;/p&gt;
+                        &lt;span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-400"&gt;
+                            {{ tarefa.categoria }}
+                        &lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;a href="/delete/{{ tarefa.id }}" onclick="return confirm('Tem certeza?')" 
+                   class="text-red-400 hover:text-red-300 px-3 py-1 text-sm"&gt;Excluir&lt;/a&gt;
+            &lt;/div&gt;
+            {% else %}
+            &lt;p class="text-center text-slate-500 mt-10"&gt;Nenhuma tarefa encontrada.&lt;/p&gt;
+            {% endfor %}
+        &lt;/div&gt;
+
+    &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
                     </div>
                 </div>
 
-                <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-backend')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-run')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Executar <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-
-            <div id="step-run" class="step-content space-y-8">
-                <div class="border-b border-border pb-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO
-                            4</span>
-                    </div>
-                    <h2 class="text-3xl font-bold text-white">Hora do Show</h2>
-                    <p class="text-muted mt-2">Executando o servidor local e testando.</p>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
-                        <div
-                            class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
-                            <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3 h-3"></i>
-                                Terminal</span>
-                            <button onclick="copyToClipboard(this)"
-                                class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy"
-                                    class="w-3 h-3"></i> Copiar</button>
-                        </div>
-                        <pre
-                            class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash">python app.py</code></pre>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-base/30 p-6 rounded-xl border border-border text-center">
-                            <h4 class="text-white font-bold mb-2">Saída Esperada</h4>
-                            <div class="font-mono text-xs text-emerald-400 bg-black/40 p-3 rounded mb-4">
-                                * Running on http://127.0.0.1:5000
-                            </div>
-                            <p class="text-sm text-muted">O servidor está ativo e escutando na porta 5000.</p>
-                        </div>
-
-                        <div
-                            class="flex-1 bg-accent/10 p-6 rounded-xl border border-accent/20 text-center flex flex-col justify-center items-center">
-                            <i data-lucide="globe" class="w-10 h-10 text-accent mb-3"></i>
-                            <h4 class="text-white font-bold mb-2">Acesse no Navegador</h4>
-                            <a href="http://127.0.0.1:5000" target="_blank"
-                                class="text-accent hover:text-white underline font-mono">http://127.0.0.1:5000</a>
-                        </div>
-                    </div>
-
-                    <div class="bg-card p-6 rounded-xl border border-border mt-8">
-                        <h3 class="text-lg font-bold text-white mb-4">Lista de Verificação</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-start gap-3">
-                                <div
-                                    class="w-5 h-5 rounded-full border border-border flex items-center justify-center mt-0.5">
-                                    <i data-lucide="check"
-                                        class="w-3 h-3 text-transparent hover:text-accent cursor-pointer transition"></i>
-                                </div>
-                                <span class="text-muted text-sm">Abriu a página sem erros?</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <div
-                                    class="w-5 h-5 rounded-full border border-border flex items-center justify-center mt-0.5">
-                                    <i data-lucide="check"
-                                        class="w-3 h-3 text-transparent hover:text-accent cursor-pointer transition"></i>
-                                </div>
-                                <span class="text-muted text-sm">Tentou enviar vazio e viu a mensagem de erro?</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <div
-                                    class="w-5 h-5 rounded-full border border-border flex items-center justify-center mt-0.5">
-                                    <i data-lucide="check"
-                                        class="w-3 h-3 text-transparent hover:text-accent cursor-pointer transition"></i>
-                                </div>
-                                <span class="text-muted text-sm">Enviou um nome e recebeu o "Olá"?</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <div class="flex justify-between pt-6 pb-20">
-                    <button onclick="showStep('step-frontend')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-intro')"
-                        class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">Concluir
-                        & Reiniciar <i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-backend')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-intro')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">Finalizar <i data-lucide="check-circle" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
@@ -555,26 +451,16 @@ app = Flask(__name__)
         lucide.createIcons();
 
         function showStep(stepId) {
-            // Esconder todos os conteúdos
-            document.querySelectorAll('.step-content').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            // Remover classe active da navegação
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active');
-            });
-
-            // Mostrar conteúdo selecionado com animação
             const content = document.getElementById(stepId);
-            content.classList.remove('active'); // Reset para animação
-            void content.offsetWidth; // Trigger reflow
+            content.classList.remove('active');
+            void content.offsetWidth;
             content.classList.add('active');
 
-            // Scroll para o topo do conteúdo
             document.querySelector('main').scrollTop = 0;
 
-            // Destacar botão na navegação
             const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
             if (btn) btn.classList.add('active');
         }
@@ -588,7 +474,7 @@ app = Flask(__name__)
                 const originalContent = button.innerHTML;
                 button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Copiado!`;
                 button.classList.add('text-emerald-400');
-                lucide.createIcons(); // Re-render icon
+                lucide.createIcons();
 
                 setTimeout(() => {
                     button.innerHTML = originalContent;
