@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tutorial: Laravel Essentials</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: "var(--color-base)",
+                        accent: "var(--color-accent)",
+                        text: "var(--color-text)",
+                        muted: "var(--color-muted)",
+                        card: "var(--color-card)",
+                        border: "var(--color-border)",
+                        laravel: "#FF2D20",
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --color-base: #0f172a;
+            --color-accent: #FF2D20; /* Laravel Red */
+            --color-text: #f8fafc;
+            --color-muted: #94a3b8;
+            --color-card: #1e293b;
+            --color-border: #334155;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                radial-gradient(circle at 20px 20px, rgba(255, 45, 32, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+        pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        .nav-item.active {
+            background-color: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        /* Table Styles */
+        .history-table th { text-align: left; padding: 12px; border-bottom: 1px solid var(--color-border); color: var(--color-accent); }
+        .history-table td { padding: 12px; border-bottom: 1px solid #334155; color: var(--color-text); font-size: 0.9rem; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+    <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+        <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="flame" class="text-accent w-6 h-6"></i>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">
+                    Laravel Pro
+                </h1>
+            </div>
+            <p class="text-xs text-muted">PHP Framework</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            
+            <div class="pt-2 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="book-open" class="w-3 h-3"></i> Teoria
+            </div>
+
+            <button onclick="showStep('step-history')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+                <span>História & Versões</span>
+            </button>
+
+            <button onclick="showStep('step-reqs')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Requisitos & Inspiração</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="download" class="w-3 h-3"></i> Instalação
+            </div>
+
+            <button onclick="showStep('step-win')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+                <span>Ambiente Windows</span>
+            </button>
+
+            <button onclick="showStep('step-linux')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
+                <span>Ambiente Linux</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="code-2" class="w-3 h-3"></i> Prática
+            </div>
+
+            <button onclick="showStep('step-structure')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">5</span>
+                <span>Estrutura de Pastas</span>
+            </button>
+
+            <button onclick="showStep('step-run')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">6</span>
+                <span>Rodando o Projeto</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+        <div class="max-w-4xl mx-auto pb-20">
+
+            <div id="step-history" class="step-content active space-y-8 animate-fade-in">
+                <div class="border-b border-border pb-6">
+                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Introdução
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">A Evolução do Laravel</h2>
+                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
+                        Criado por <strong>Taylor Otwell</strong> em 2011, o Laravel nasceu para tornar o desenvolvimento PHP elegante, divertido e expressivo, fugindo da complexidade de frameworks antigos.
+                    </p>
+                </div>
+
+                <div class="bg-card rounded-xl border border-border overflow-hidden">
+                    <table class="w-full history-table">
+                        <thead>
+                            <tr class="bg-base/50">
+                                <th>Versão</th>
+                                <th>Lançamento</th>
+                                <th>Destaque Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 1-3</td>
+                                <td>2011-2012</td>
+                                <td>O início. Foco em rotas simples e MVC básico.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 4</td>
+                                <td>Mai 2013</td>
+                                <td>Reescrita completa. Introdução do Composer.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 5</td>
+                                <td>Fev 2015</td>
+                                <td>Estrutura de pastas atual, Middleware, Contracts.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 6 (LTS)</td>
+                                <td>Set 2019</td>
+                                <td>Versionamento Semântico (SemVer), Vapor.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 8</td>
+                                <td>Set 2020</td>
+                                <td>Laravel Jetstream, Models Directory, Job Batching.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 10</td>
+                                <td>Fev 2023</td>
+                                <td>Tipagem nativa PHP 8.1+, Pest Testing padrão.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono text-accent">Laravel 11</td>
+                                <td>Mar 2024</td>
+                                <td>Estrutura minimalista, SQLite padrão, Health Check.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex justify-end pt-6">
+                    <button onclick="showStep('step-reqs')" class="bg-accent hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20">
+                        Próximo: Requisitos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-reqs" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Requisitos & Inspiração</h2>
+                    <p class="text-muted mt-2">O que você precisa para rodar e por que escolher o Laravel.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-card p-6 rounded-xl border border-border">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="check-square" class="text-accent"></i> Pré-requisitos (v10+)</h3>
+                        <ul class="space-y-3 text-sm text-muted">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> PHP >= 8.1</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Composer (Gerenciador de Pacotes)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Extensão PHP BCMath</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Extensão PHP Ctype & JSON</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Extensão PHP Mbstring & OpenSSL</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Extensão PHP PDO & XML</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-accent/10 to-orange-500/10 p-6 rounded-xl border border-accent/20">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="text-yellow-400"></i> Por que Laravel?</h3>
+                        <blockquote class="italic text-slate-300 border-l-4 border-accent pl-4 mb-4">
+                            "The PHP Framework for Web Artisans."
+                        </blockquote>
+                        <p class="text-sm text-muted mb-3">
+                            O Laravel foi desenhado para desenvolvedores que valorizam código limpo.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 rounded bg-base border border-slate-700 text-xs">Segurança Robusta</span>
+                            <span class="px-2 py-1 rounded bg-base border border-slate-700 text-xs">Ecossistema Gigante</span>
+                            <span class="px-2 py-1 rounded bg-base border border-slate-700 text-xs">Eloquent ORM</span>
+                            <span class="px-2 py-1 rounded bg-base border border-slate-700 text-xs">Blade Template</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-history')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-win')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Windows <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-win" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Criando no Windows</h2>
+                    <p class="text-muted mt-2">Usando o Composer no PowerShell ou CMD.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg flex gap-3 items-start">
+                        <i data-lucide="info" class="text-blue-400 w-5 h-5 mt-0.5"></i>
+                        <div class="text-sm text-blue-300">
+                            <strong>Dica:</strong> Certifique-se de ter o <a href="https://getcomposer.org/" target="_blank" class="underline hover:text-white">Composer</a> instalado e adicionado ao PATH do Windows.
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3 h-3"></i> PowerShell</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                        </div>
+                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-powershell"># 1. Navegue até sua pasta de projetos
+cd C:\xampp\htdocs 
+# (ou onde preferir salvar)
+
+# 2. Crie o projeto via Composer
+composer create-project laravel/laravel minha-app-windows
+
+# 3. Entre na pasta
+cd minha-app-windows
+
+# 4. Verifique a versão
+php artisan --version</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-reqs')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-linux')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Linux <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-linux" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Criando no Linux (Ubuntu)</h2>
+                    <p class="text-muted mt-2">Terminal é o habitat natural do Laravel.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">1. Dependências do Sistema</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">sudo apt update
+sudo apt install php php-cli php-mbstring php-xml php-curl composer unzip</code></pre>
+                    </div>
+
+                    <h3 class="text-white font-bold text-sm mt-4">2. Criar Projeto e Permissões</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span>Bash</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                        </div>
+                        <pre class="!border-0"><code class="language-bash"># Criar projeto
+composer create-project laravel/laravel minha-app-linux
+
+cd minha-app-linux
+
+# CRUCIAL NO LINUX: Permissões de escrita
+# O Laravel precisa escrever nestas pastas
+sudo chmod -R 775 storage bootstrap/cache
+sudo chown -R $USER:www-data storage bootstrap/cache</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-win')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-structure')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Estrutura <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-structure" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Anatomia do Projeto</h2>
+                    <p class="text-muted mt-2">Entendendo onde cada arquivo vive.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-base/30 p-6 rounded-xl border border-border font-mono text-sm">
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> app/ <span class="text-xs text-muted ml-auto">Lógica (Controllers, Models)</span></li>
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> config/ <span class="text-xs text-muted ml-auto">Configurações do App</span></li>
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> database/ <span class="text-xs text-muted ml-auto">Migrations & Seeds</span></li>
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> public/ <span class="text-xs text-muted ml-auto">index.php, CSS, JS, Imagens</span></li>
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> resources/ <span class="text-xs text-muted ml-auto">Views (Blade), Assets brutos</span></li>
+                            <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="text-accent w-4 h-4"></i> routes/ <span class="text-xs text-muted ml-auto">Definição de Rotas (web.php)</span></li>
+                            <li class="flex items-center gap-2 text-yellow-400 mt-4"><i data-lucide="file-cog" class="w-4 h-4"></i> .env <span class="text-xs text-muted ml-auto">Variáveis de Ambiente (DB, Senhas)</span></li>
+                            <li class="flex items-center gap-2 text-blue-400"><i data-lucide="file-json" class="w-4 h-4"></i> composer.json <span class="text-xs text-muted ml-auto">Dependências PHP</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-card p-4 rounded-lg border border-border">
+                            <h4 class="text-accent font-bold mb-1">.env</h4>
+                            <p class="text-xs text-muted">É aqui que você configura a conexão com o banco de dados (MySQL, Postgres), chaves de API e modo de debug. Nunca envie este arquivo para o Git!</p>
+                        </div>
+                        <div class="bg-card p-4 rounded-lg border border-border">
+                            <h4 class="text-accent font-bold mb-1">routes/web.php</h4>
+                            <p class="text-xs text-muted">Arquivo principal de rotas. Aqui você define que a URL <code>/home</code> vai carregar o Controller <code>HomeController</code>.</p>
+                        </div>
+                        <div class="bg-card p-4 rounded-lg border border-border">
+                            <h4 class="text-accent font-bold mb-1">resources/views</h4>
+                            <p class="text-xs text-muted">Onde ficam seus arquivos HTML (extensão <code>.blade.php</code>). O Blade é o motor de template poderoso do Laravel.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-linux')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-run')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Finalizar <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-run" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Rodando o Projeto</h2>
+                    <p class="text-muted mt-2">Ligando os motores com o Artisan.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                            <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3 h-3"></i> Terminal</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                        </div>
+                        <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash">php artisan serve</code></pre>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 bg-base/30 p-6 rounded-xl border border-border text-center">
+                            <h4 class="text-white font-bold mb-2">Acesse</h4>
+                            <div class="font-mono text-xs text-accent bg-black/40 p-3 rounded mb-4">
+                                http://127.0.0.1:8000
+                            </div>
+                            <p class="text-sm text-muted">O servidor de desenvolvimento do Laravel é leve e rápido.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-gradient-to-r from-accent/20 to-orange-500/20 border border-accent/30 p-8 rounded-2xl text-center">
+                        <div class="inline-flex p-3 rounded-full bg-accent/20 text-accent mb-4">
+                            <i data-lucide="trophy" class="w-8 h-8"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mb-2">Parabéns! 🚀</h2>
+                        <p class="text-slate-300">Você concluiu o <strong>Módulo 1: Introdução ao Laravel</strong>.</p>
+                        <p class="text-sm text-muted mt-2">Seu ambiente está configurado e pronto para construir aplicações robustas.</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6 pb-20">
+                    <button onclick="showStep('step-structure')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-history')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Reiniciar <i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const content = document.getElementById(stepId);
+            content.classList.remove('active');
+            void content.offsetWidth;
+            content.classList.add('active');
+
+            document.querySelector('main').scrollTop = 0;
+
+            const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const parent = button.closest('.rounded-lg');
+            const codeBlock = parent.querySelector('code');
+            const code = codeBlock.innerText;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Copiado!`;
+                button.classList.add('text-green-400');
+                lucide.createIcons();
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('text-green-400');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

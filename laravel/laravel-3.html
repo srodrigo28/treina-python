@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tutorial: Laravel Auth & API</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: "var(--color-base)",
+                        accent: "var(--color-accent)",
+                        text: "var(--color-text)",
+                        muted: "var(--color-muted)",
+                        card: "var(--color-card)",
+                        border: "var(--color-border)",
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --color-base: #0f172a;
+            --color-accent: #ef4444; /* Laravel Red */
+            --color-text: #f8fafc;
+            --color-muted: #94a3b8;
+            --color-card: #1e293b;
+            --color-border: #334155;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                radial-gradient(circle at 20px 20px, rgba(239, 68, 68, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+        pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        .nav-item.active {
+            background-color: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        /* PHP Syntax Highlighting Fake */
+        .php-tag { color: #f87171; }
+        .func { color: #60a5fa; }
+        .str { color: #a3e635; }
+        .var { color: #c084fc; }
+        .comment { color: #64748b; font-style: italic; }
+        .class { color: #fbbf24; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+    <aside class="w-full md:w-72 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+        <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="shield-check" class="text-accent w-6 h-6"></i>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">
+                    Laravel Lv.3
+                </h1>
+            </div>
+            <p class="text-xs text-muted">Auth & API Development</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+                <span>Objetivo</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="play" class="w-3 h-3"></i> Início
+            </div>
+
+            <button onclick="showStep('step-create')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+                <span>Criar Projeto</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="lock" class="w-3 h-3"></i> Autenticação
+            </div>
+
+            <button onclick="showStep('step-breeze')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Instalando Breeze</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="globe" class="w-3 h-3"></i> API Rest
+            </div>
+
+            <button onclick="showStep('step-api-route')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+                <span>Rotas de API</span>
+            </button>
+
+            <button onclick="showStep('step-resource')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
+                <span>API Resource</span>
+            </button>
+
+            <button onclick="showStep('step-sanctum')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">5</span>
+                <span>Tokens (Sanctum)</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+        <div class="max-w-4xl mx-auto pb-20">
+
+            <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+                <div class="border-b border-border pb-6">
+                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Módulo 3
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Segurança & API</h2>
+                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
+                        Vamos criar uma nova aplicação focada em Autenticação. Usaremos o <strong>Laravel Breeze</strong> para gerar telas de login em segundos e depois criaremos uma API segura.
+                    </p>
+                </div>
+
+                <div class="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl flex items-start gap-3">
+                    <i data-lucide="alert-triangle" class="text-yellow-500 w-5 h-5 mt-1"></i>
+                    <div>
+                        <h4 class="text-yellow-500 font-bold">Importante</h4>
+                        <p class="text-sm text-muted">Não use o projeto do Módulo 2. O Breeze substitui arquivos e pode quebrar seu CRUD manual. Vamos começar do zero para garantir um ambiente limpo.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="showStep('step-create')" class="bg-accent hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+                        Criar Novo Projeto <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-create" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Criando o Projeto</h2>
+                    <p class="text-muted mt-2">Vamos gerar uma nova aplicação Laravel limpa.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">1. Terminal</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted font-mono flex justify-between">
+                            <span>Terminal</span>
+                            <button onclick="copyToClipboard(this)" class="hover:text-white flex gap-1"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                        </div>
+                        <pre class="!border-0"><code class="language-bash"># Volte para sua pasta de projetos (ex: htdocs ou www)
+cd .. 
+
+# Crie um novo projeto chamado 'laravel-auth'
+composer create-project laravel/laravel laravel-auth
+
+# Entre na pasta
+cd laravel-auth</code></pre>
+                    </div>
+
+                    <h3 class="text-white font-bold text-sm mt-4">2. Banco de Dados</h3>
+                    <p class="text-xs text-muted">Configure o arquivo <code>.env</code> com um banco novo (ex: <code>laravel_auth_db</code>). Não esqueça de criar esse banco no PHPMyAdmin.</p>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-env">DB_DATABASE=laravel_auth_db
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-breeze')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Breeze <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-breeze" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Instalando Laravel Breeze</h2>
+                    <p class="text-muted mt-2">Breeze instala rotas, controllers e views para Login, Registro e Recuperação de Senha.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">1. Requerer o Pacote</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">composer require laravel/breeze --dev</code></pre>
+                    </div>
+
+                    <h3 class="text-white font-bold text-sm mt-4">2. Instalar e Compilar</h3>
+                    <p class="text-xs text-muted">Este comando vai criar as views e pedir para instalar as dependências de Front-end.</p>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash"># Instala o scaffolding usando Blade (padrão)
+php artisan breeze:install blade
+
+# Cria as tabelas de usuário e sessão no banco
+php artisan migrate
+
+# Instala dependências CSS/JS (Node.js necessário)
+npm install
+npm run dev</code></pre>
+                    </div>
+                    
+                    <div class="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex items-start gap-3 mt-4">
+                        <i data-lucide="check-circle" class="text-green-400 w-5 h-5 mt-0.5"></i>
+                        <div>
+                            <h4 class="text-green-400 font-bold text-sm">Teste Agora!</h4>
+                            <p class="text-sm text-muted">Abra <code>http://127.0.0.1:8000/login</code>. Você verá um sistema de login completo e funcional.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-create')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-api-route')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: API <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-api-route" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Criando uma API JSON</h2>
+                    <p class="text-muted mt-2">Laravel separa rotas web (com sessão/cookies) de rotas API (sem estado/tokens) no arquivo <code>routes/api.php</code>.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">1. Controller de API</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">php artisan make:controller Api/TaskApiController --api</code></pre>
+                    </div>
+                    <p class="text-xs text-muted">A flag <code>--api</code> cria um controller limpo, sem métodos `create` ou `edit` (que retornam HTML).</p>
+
+                    <h3 class="text-white font-bold text-sm mt-4">2. Definindo a Rota (routes/api.php)</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-php"><span class="keyword">use</span> App\Http\Controllers\Api\TaskApiController;
+
+<span class="comment">// O Laravel adiciona o prefixo /api automaticamente</span>
+Route::<span class="func">apiResource</span>(<span class="str">'tasks'</span>, TaskApiController::<span class="class">class</span>);</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-breeze')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-resource')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Resources <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-resource" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">API Resources</h2>
+                    <p class="text-muted mt-2">Transformando Models em JSON limpo e seguro.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">1. Criar Resource</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">php artisan make:resource TaskResource</code></pre>
+                    </div>
+
+                    <h3 class="text-white font-bold text-sm mt-4">2. Configurar (app/Http/Resources/TaskResource.php)</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-php"><span class="keyword">public function</span> <span class="func">toArray</span>(Request <span class="var">$request</span>): <span class="keyword">array</span>
+{
+    <span class="keyword">return</span> [
+        <span class="str">'id'</span> => <span class="var">$this</span>->id,
+        <span class="str">'titulo'</span> => <span class="var">$this</span>->name, <span class="comment">// Mudando nome do campo para quem consome</span>
+        <span class="str">'categoria'</span> => <span class="var">$this</span>->category,
+        <span class="str">'concluido'</span> => (<span class="keyword">bool</span>) <span class="var">$this</span>->status,
+        <span class="str">'criado_em'</span> => <span class="var">$this</span>->created_at-><span class="func">format</span>(<span class="str">'d/m/Y'</span>),
+    ];
+}</code></pre>
+                    </div>
+
+                    <h3 class="text-white font-bold text-sm mt-4">3. Usar no Controller</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-php"><span class="keyword">public function</span> <span class="func">index</span>() {
+    <span class="comment">// Retorna a coleção formatada pelo Resource</span>
+    <span class="keyword">return</span> TaskResource::<span class="func">collection</span>(Task::<span class="func">all</span>());
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-api-route')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-sanctum')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Sanctum <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-sanctum" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">Tokens com Sanctum</h2>
+                    <p class="text-muted mt-2">Laravel Sanctum já vem instalado e oferece um sistema leve de autenticação via Token.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-sm">Criar Rota de Login API</h3>
+                    <p class="text-xs text-muted">No controller <code>Api/AuthController.php</code> (crie este arquivo):</p>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-php"><span class="keyword">public function</span> <span class="func">login</span>(Request <span class="var">$request</span>) {
+    <span class="var">$user</span> = User::<span class="func">where</span>(<span class="str">'email'</span>, <span class="var">$request</span>->email)-><span class="func">first</span>();
+
+    <span class="keyword">if</span> (! <span class="var">$user</span> || ! Hash::<span class="func">check</span>(<span class="var">$request</span>->password, <span class="var">$user</span>->password)) {
+        <span class="keyword">return</span> <span class="func">response</span>()-><span class="func">json</span>([<span class="str">'msg'</span> => <span class="str">'Falha'</span>], 401);
+    }
+
+    <span class="comment">// Gera o token de acesso</span>
+    <span class="var">$token</span> = <span class="var">$user</span>-><span class="func">createToken</span>(<span class="str">'auth_token'</span>)->plainTextToken;
+
+    <span class="keyword">return</span> <span class="func">response</span>()-><span class="func">json</span>([<span class="str">'token'</span> => <span class="var">$token</span>]);
+}</code></pre>
+                    </div>
+
+                    <div class="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex items-start gap-3 mt-4">
+                        <i data-lucide="shield" class="text-green-400 w-5 h-5 mt-0.5"></i>
+                        <div>
+                            <h4 class="text-green-400 font-bold text-sm">Protegendo Rotas API</h4>
+                            <p class="text-sm text-muted">Use <code>Route::middleware('auth:sanctum')</code> no arquivo <code>api.php</code> para exigir o token nas rotas de tarefas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6 pb-20">
+                    <button onclick="showStep('step-resource')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-intro')" class="bg-accent hover:bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-accent/20">Reiniciar Módulo <i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const content = document.getElementById(stepId);
+            content.classList.remove('active');
+            void content.offsetWidth;
+            content.classList.add('active');
+
+            document.querySelector('main').scrollTop = 0;
+
+            const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const parent = button.closest('.rounded-lg');
+            const codeBlock = parent.querySelector('code');
+            const code = codeBlock.innerText;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i>`;
+                button.classList.add('text-green-400');
+                lucide.createIcons();
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('text-green-400');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
