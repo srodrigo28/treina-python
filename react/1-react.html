@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tutorial: Fundamentos ReactJS</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: "var(--color-base)",
+            accent: "var(--color-accent)",
+            text: "var(--color-text)",
+            muted: "var(--color-muted)",
+            card: "var(--color-card)",
+            border: "var(--color-border)",
+            js: "#f7df1e", // JS Yellow
+            ts: "#3178c6", // TS Blue
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --color-base: #0f172a;      /* bg-slate-900 */
+      --color-accent: #0ea5e9;    /* React Blue (Sky-500) */
+      --color-text: #f8fafc;
+      --color-muted: #94a3b8;
+      --color-card: #1e293b;
+      --color-border: #334155;
+    }
+
+    .bg-pattern {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+        radial-gradient(circle at 20px 20px, rgba(14, 165, 233, 0.05) 1px, transparent 0);
+      background-size: 32px 32px, 32px 32px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-base); }
+    ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+    pre {
+      background-color: #0d1117;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      margin: 0;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+    }
+
+    .step-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .step-content.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-item.active {
+      background-color: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+    
+    /* Syntax Highlighting Fake */
+    .keyword { color: #ff79c6; }
+    .component { color: #f1fa8c; } 
+    .prop { color: #8be9fd; }
+    .string { color: #50fa7b; }
+    .comment { color: #6272a4; font-style: italic; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+  <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+    <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+      <div class="flex items-center gap-2 mb-1">
+        <i data-lucide="atom" class="text-accent w-7 h-7 animate-[spin_10s_linear_infinite]"></i>
+        <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-blue-500">
+          React Start
+        </h1>
+      </div>
+      <p class="text-xs text-muted">Do Zero ao SPA</p>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <button onclick="showStep('step-intro')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+        <span class="font-medium">O que é React?</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="wrench" class="w-3 h-3"></i> Configuração
+      </div>
+
+      <button onclick="showStep('step-node')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+        <span>Check Node.js</span>
+      </button>
+
+      <button onclick="showStep('step-create')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+        <span>Criar Projeto (Vite)</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="code-2" class="w-3 h-3"></i> Desenvolvimento
+      </div>
+
+      <button onclick="showStep('step-structure')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+        <span>Estrutura Inicial</span>
+      </button>
+
+      <button onclick="showStep('step-jsx-tsx')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
+        <span>JSX vs TSX</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-border bg-base/30">
+      <div class="flex items-center justify-between text-xs text-muted">
+        <span>v1.0 Frontend</span>
+        <span class="px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/20">SPA</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+    <div class="max-w-5xl mx-auto pb-20">
+
+      <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+        <div class="border-b border-border pb-6">
+          <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Bem-vindo
+          </span>
+          <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">ReactJS: A Biblioteca do Futuro</h2>
+          <p class="text-lg text-muted leading-relaxed max-w-2xl">
+            React é uma biblioteca JavaScript para criar interfaces de usuário. Diferente de sites antigos, ele cria <strong>Single Page Applications (SPA)</strong>, onde a página nunca recarrega, apenas o conteúdo muda.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+            <div class="w-12 h-12 rounded-lg bg-sky-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="layers" class="text-accent w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 text-white">Baseado em Componentes</h3>
+            <p class="text-sm text-muted">Você constrói pequenos blocos (Botão, Header, Card) e os monta como Lego para criar sites complexos.</p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors group">
+            <div class="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="text-yellow-400 w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 text-white">Rápido (Vite)</h3>
+            <p class="text-sm text-muted">Antigamente usávamos o CRA (Create React App). Hoje usamos <strong>Vite</strong>, que é instantâneo e leve.</p>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+          <button onclick="showStep('step-node')"
+            class="bg-accent hover:bg-sky-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+            Iniciar Setup <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="step-node" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-mono font-bold border border-green-500/20">PASSO 1</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Verificando o Motor</h2>
+          <p class="text-muted mt-2">O React precisa do <strong>Node.js</strong> instalado no seu computador para rodar o ambiente de desenvolvimento.</p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-xl font-semibold text-white flex items-center gap-2">
+            <i data-lucide="terminal" class="text-accent w-5 h-5"></i> Teste de Instalação
+          </h3>
+          <p class="text-muted text-sm">Abra seu terminal e digite:</p>
+
+          <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+            <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+              <span>Terminal</span>
+              <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+            </div>
+            <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code class="language-bash">node -v
+npm -v</code></pre>
+          </div>
+
+          <div class="bg-card p-4 rounded-lg border border-border flex items-start gap-4">
+             <div class="bg-green-500/20 p-2 rounded text-green-400"><i data-lucide="check" class="w-5 h-5"></i></div>
+             <div>
+                 <h4 class="text-white font-bold text-sm">Saída Esperada</h4>
+                 <p class="text-muted text-xs mt-1">Se aparecer números como <code>v18.16.0</code> ou superior, você está pronto.</p>
+             </div>
+          </div>
+
+          <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg flex items-start gap-4">
+             <div class="bg-red-500/20 p-2 rounded text-red-400"><i data-lucide="x" class="w-5 h-5"></i></div>
+             <div>
+                 <h4 class="text-white font-bold text-sm">Deu erro?</h4>
+                 <p class="text-muted text-xs mt-1">Baixe a versão <strong>LTS</strong> em <a href="https://nodejs.org" target="_blank" class="text-accent underline">nodejs.org</a>.</p>
+             </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-create')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Criar Projeto <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-create" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-mono font-bold border border-violet-500/20">PASSO 2</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Criando o Projeto</h2>
+          <p class="text-muted mt-2">Vamos usar o <strong>Vite</strong>. Ele é muito mais rápido que o antigo <code>create-react-app</code>.</p>
+        </div>
+
+        <div class="space-y-4 mb-8">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-3 h-3 rounded-full bg-js"></span>
+                <h3 class="text-xl font-bold text-white">Opção A: Projeto com JavaScript (JSX)</h3>
+            </div>
+            <p class="text-sm text-muted">Ideal para quem está aprendendo a lógica do React sem se preocupar com tipagem.</p>
+            
+            <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                  <span>Terminal</span>
+                  <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                </div>
+                <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code>npm create vite@latest meu-projeto-js -- --template react
+cd meu-projeto-js
+npm install
+npm run dev</code></pre>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-3 h-3 rounded-full bg-ts"></span>
+                <h3 class="text-xl font-bold text-white">Opção B: Projeto com TypeScript (TSX)</h3>
+            </div>
+            <p class="text-sm text-muted">O padrão profissional de mercado. Mais seguro e com autocompletar inteligente.</p>
+            
+            <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg">
+                <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted flex justify-between items-center font-mono">
+                  <span>Terminal</span>
+                  <button onclick="copyToClipboard(this)" class="hover:text-white transition flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copiar</button>
+                </div>
+                <pre class="!border-0 !rounded-none !bg-transparent opacity-90"><code>npm create vite@latest meu-projeto-ts -- --template react-ts
+cd meu-projeto-ts
+npm install
+npm run dev</code></pre>
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-node')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-structure')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Estrutura <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-structure" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-mono font-bold border border-pink-500/20">PASSO 3</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Anatomia do Projeto</h2>
+          <p class="text-muted mt-2">Entendendo onde cada coisa vive.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-card rounded-lg border border-border p-6 font-mono text-sm">
+                <ul class="space-y-3 text-muted">
+                    <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="w-4 h-4 text-accent"></i> node_modules/ <span class="text-xs text-gray-500 ml-auto">Bibliotecas (não mexa)</span></li>
+                    <li class="flex items-center gap-2 text-white"><i data-lucide="folder" class="w-4 h-4 text-accent"></i> public/ <span class="text-xs text-gray-500 ml-auto">Imagens estáticas</span></li>
+                    <li class="flex items-center gap-2 text-white"><i data-lucide="folder-open" class="w-4 h-4 text-accent"></i> src/</li>
+                    
+                    <li class="pl-6 flex items-center gap-2 text-emerald-400"><i data-lucide="file-code" class="w-4 h-4"></i> main.jsx (ou .tsx) <span class="text-xs text-gray-500 ml-auto">Ponto de entrada</span></li>
+                    <li class="pl-6 flex items-center gap-2 text-yellow-400"><i data-lucide="file-code" class="w-4 h-4"></i> App.jsx (ou .tsx) <span class="text-xs text-gray-500 ml-auto">Componente Principal</span></li>
+                    <li class="pl-6 flex items-center gap-2 text-pink-400"><i data-lucide="file-css" class="w-4 h-4"></i> index.css <span class="text-xs text-gray-500 ml-auto">Estilos globais</span></li>
+                    
+                    <li class="flex items-center gap-2 text-white mt-4"><i data-lucide="file-json" class="w-4 h-4 text-orange-400"></i> package.json <span class="text-xs text-gray-500 ml-auto">Config e Scripts</span></li>
+                    <li class="flex items-center gap-2 text-white"><i data-lucide="file-code" class="w-4 h-4 text-violet-400"></i> vite.config.js <span class="text-xs text-gray-500 ml-auto">Config do Vite</span></li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-base/30 p-4 rounded-lg border border-border">
+                    <h4 class="text-accent font-bold mb-1">main.jsx</h4>
+                    <p class="text-xs text-muted">É onde o React "nasce". Ele pega o elemento <code>#root</code> do HTML e injeta o App inteiro dentro dele.</p>
+                </div>
+                <div class="bg-base/30 p-4 rounded-lg border border-border">
+                    <h4 class="text-yellow-400 font-bold mb-1">App.jsx</h4>
+                    <p class="text-xs text-muted">É a sua "página inicial". Tudo o que você vê na tela começa sendo montado aqui.</p>
+                </div>
+                <div class="bg-base/30 p-4 rounded-lg border border-border">
+                    <h4 class="text-orange-400 font-bold mb-1">package.json</h4>
+                    <p class="text-xs text-muted">A "identidade" do projeto. Lista quais bibliotecas você instalou e quais comandos (scripts) pode rodar.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-create')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-jsx-tsx')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: JSX vs TSX <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-jsx-tsx" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO 4</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">A Batalha das Extensões</h2>
+          <p class="text-muted mt-2">Qual a diferença real entre programar em <code>.jsx</code> e <code>.tsx</code>?</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-js flex items-center gap-2"><i data-lucide="file-code" class="w-5 h-5"></i> JSX (JavaScript XML)</h3>
+                    <span class="text-xs bg-js/20 text-js px-2 py-1 rounded">Flexível</span>
+                </div>
+                <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg h-full">
+                    <pre class="!bg-transparent !border-0 h-full"><code class="language-jsx"><span class="keyword">function</span> <span class="component">Botao</span>({ <span class="prop">texto</span> }) {
+  <span class="keyword">return</span> (
+    &lt;<span class="component">button</span>&gt;
+      {<span class="prop">texto</span>}
+    &lt;/<span class="component">button</span>&gt;
+  );
+}
+
+<span class="comment">// Uso (Risco de erro):</span>
+&lt;<span class="component">Botao</span> <span class="prop">texto</span>={123} /&gt; 
+<span class="comment">// Funciona, mas pode quebrar o layout</span></code></pre>
+                </div>
+                <p class="text-xs text-muted"><strong>Prós:</strong> Menos código para escrever. Rápido para protótipos.<br><strong>Contras:</strong> Você não sabe o que o componente espera receber até dar erro.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-ts flex items-center gap-2"><i data-lucide="file-type-2" class="w-5 h-5"></i> TSX (TypeScript XML)</h3>
+                    <span class="text-xs bg-ts/20 text-ts px-2 py-1 rounded">Seguro</span>
+                </div>
+                <div class="bg-card rounded-lg border border-border overflow-hidden shadow-lg h-full">
+                    <pre class="!bg-transparent !border-0 h-full"><code class="language-tsx"><span class="keyword">interface</span> Props {
+  <span class="prop">texto</span>: <span class="keyword">string</span>;
+}
+
+<span class="keyword">function</span> <span class="component">Botao</span>({ <span class="prop">texto</span> }: Props) {
+  <span class="keyword">return</span> (
+    &lt;<span class="component">button</span>&gt;
+      {<span class="prop">texto</span>}
+    &lt;/<span class="component">button</span>&gt;
+  );
+}
+
+<span class="comment">// Uso (Segurança):</span>
+&lt;<span class="component">Botao</span> <span class="prop">texto</span>={123} /&gt; 
+<span class="comment">// ERRO IMEDIATO: "Number is not string"</span></code></pre>
+                </div>
+                <p class="text-xs text-muted"><strong>Prós:</strong> Autocomplete perfeito. O editor avisa erros antes de rodar.<br><strong>Contras:</strong> Mais verboso (tem que criar interfaces).</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6 pb-20">
+            <button onclick="showStep('step-structure')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-intro')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">Finalizar & Voltar <i data-lucide="check-circle" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Inicializar ícones
+    lucide.createIcons();
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const content = document.getElementById(stepId);
+      content.classList.remove('active');
+      void content.offsetWidth; // Trigger reflow
+      content.classList.add('active');
+
+      document.querySelector('main').scrollTop = 0;
+
+      const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+      if (btn) btn.classList.add('active');
+    }
+
+    function copyToClipboard(button) {
+      const parent = button.closest('.rounded-lg');
+      const codeBlock = parent.querySelector('code');
+      const code = codeBlock.innerText;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const originalContent = button.innerHTML;
+        button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Copiado!`;
+        button.classList.add('text-emerald-400');
+        lucide.createIcons(); 
+
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+          button.classList.remove('text-emerald-400');
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+
+</html>
