@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guia Definitivo: Comandos de Terminal</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: "var(--color-base)",
+            accent: "var(--color-accent)",
+            text: "var(--color-text)",
+            muted: "var(--color-muted)",
+            card: "var(--color-card)",
+            border: "var(--color-border)",
+            // Cores específicas dos terminais
+            linux: "#e95420",     /* Ubuntu Orange */
+            powershell: "#2563eb", /* PS Blue */
+            cmd: "#525252",        /* CMD Gray */
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --color-base: #0f172a;      /* bg-slate-900 */
+      --color-accent: #7c3aed;    /* bg-violet-600 */
+      --color-text: #f8fafc;
+      --color-muted: #94a3b8;
+      --color-card: #1e293b;
+      --color-border: #334155;
+    }
+
+    .bg-pattern {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+        radial-gradient(circle at 12px 12px, rgba(124, 58, 237, 0.1) 1px, transparent 0);
+      background-size: 24px 24px, 24px 24px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-base); }
+    ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+    pre {
+      background-color: #0d1117;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      margin: 0;
+      font-family: 'Fira Code', monospace;
+    }
+
+    code { font-size: 0.85rem; color: #e2e8f0; }
+
+    .step-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .step-content.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-item.active {
+      background-color: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Tabela de Comparação */
+    .cmd-table th { @apply text-left p-3 text-xs font-bold uppercase tracking-wider border-b border-border text-muted; }
+    .cmd-table td { @apply p-3 border-b border-border text-sm; }
+    .cmd-table tr:last-child td { border-bottom: none; }
+    .cmd-table tr:hover { @apply bg-white/5; }
+
+    /* Badges de Terminal */
+    .badge-linux { @apply bg-[#e95420]/20 text-[#e95420] border-[#e95420]/30 border px-2 py-0.5 rounded text-xs font-mono; }
+    .badge-ps { @apply bg-[#2563eb]/20 text-[#2563eb] border-[#2563eb]/30 border px-2 py-0.5 rounded text-xs font-mono; }
+    .badge-cmd { @apply bg-[#a3a3a3]/20 text-[#a3a3a3] border-[#a3a3a3]/30 border px-2 py-0.5 rounded text-xs font-mono; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+  <aside class="w-full md:w-64 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+    <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+      <div class="flex items-center gap-2 mb-1">
+        <i data-lucide="terminal-square" class="text-accent w-6 h-6"></i>
+        <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
+          Terminal Pro
+        </h1>
+      </div>
+      <p class="text-xs text-muted">Linux • PS • CMD</p>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <button onclick="showStep('step-intro')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
+        <span class="font-medium">Introdução</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="book-open" class="w-3 h-3"></i> Comparativos
+      </div>
+
+      <button onclick="showStep('step-basics')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
+        <span>Rosetta Stone (Básico)</span>
+      </button>
+
+      <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="star" class="w-3 h-3"></i> Top Essenciais
+      </div>
+
+      <button onclick="showStep('step-top10')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
+        <span>Top 10 (Dia a Dia)</span>
+      </button>
+
+      <button onclick="showStep('step-top20')"
+        class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+        <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
+        <span>Top 20 (Power User)</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-border bg-base/30">
+      <div class="flex items-center justify-between text-xs text-muted">
+        <span>v1.0 Reference</span>
+        <span class="px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/20">DevOps</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+    <div class="max-w-5xl mx-auto pb-20">
+
+      <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+        <div class="border-b border-border pb-6">
+          <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Módulo Inicial
+          </span>
+          <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Domine a Linha de Comando</h2>
+          <p class="text-lg text-muted leading-relaxed max-w-2xl">
+            Para um programador, o terminal não é uma tela preta assustadora, é a ferramenta mais rápida do sistema. Vamos desmistificar as diferenças entre os três gigantes.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-linux/50 transition-colors group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-linux/10 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center gap-3 mb-4">
+                <i data-lucide="terminal" class="text-linux w-6 h-6"></i>
+                <h3 class="text-lg font-bold text-white">Linux (Bash)</h3>
+            </div>
+            <p class="text-sm text-muted">O padrão da indústria para servidores (VPS) e desenvolvimento web. Essencial para Docker e Deploy.</p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-powershell/50 transition-colors group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-powershell/10 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center gap-3 mb-4">
+                <i data-lucide="shell" class="text-powershell w-6 h-6"></i>
+                <h3 class="text-lg font-bold text-white">PowerShell</h3>
+            </div>
+            <p class="text-sm text-muted">O terminal moderno do Windows. Poderoso, orientado a objetos e compatível com muitos comandos Linux (aliases).</p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border hover:border-cmd/50 transition-colors group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-cmd/10 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center gap-3 mb-4">
+                <i data-lucide="command" class="text-cmd w-6 h-6"></i>
+                <h3 class="text-lg font-bold text-white">CMD (Prompt)</h3>
+            </div>
+            <p class="text-sm text-muted">O legado do MS-DOS. Limitado, mas onipresente em máquinas Windows antigas. Útil para scripts `.bat` simples.</p>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+          <button onclick="showStep('step-basics')"
+            class="bg-accent hover:bg-violet-500 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
+            Ver Tabela Comparativa <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="step-basics" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono font-bold border border-blue-500/20">PASSO 1</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">A Pedra de Roseta</h2>
+          <p class="text-muted mt-2">Como fazer a mesma tarefa básica em cada sistema.</p>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-border shadow-xl">
+            <table class="w-full cmd-table bg-card">
+                <thead>
+                    <tr class="bg-base/50">
+                        <th class="w-1/4">Tarefa</th>
+                        <th class="text-linux">Linux (Bash)</th>
+                        <th class="text-powershell">PowerShell</th>
+                        <th class="text-cmd">CMD (Prompt)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-medium text-white">Listar arquivos</td>
+                        <td><code class="text-linux">ls</code></td>
+                        <td><code class="text-powershell">ls</code> ou <code class="text-powershell">Get-ChildItem</code></td>
+                        <td><code class="text-cmd">dir</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Entrar na pasta</td>
+                        <td><code class="text-linux">cd pasta</code></td>
+                        <td><code class="text-powershell">cd pasta</code></td>
+                        <td><code class="text-cmd">cd pasta</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Voltar pasta</td>
+                        <td><code class="text-linux">cd ..</code></td>
+                        <td><code class="text-powershell">cd ..</code></td>
+                        <td><code class="text-cmd">cd ..</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Criar pasta</td>
+                        <td><code class="text-linux">mkdir nova</code></td>
+                        <td><code class="text-powershell">mkdir nova</code></td>
+                        <td><code class="text-cmd">mkdir nova</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Limpar tela</td>
+                        <td><code class="text-linux">clear</code></td>
+                        <td><code class="text-powershell">clear</code> ou <code class="text-powershell">cls</code></td>
+                        <td><code class="text-cmd">cls</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Copiar arquivo</td>
+                        <td><code class="text-linux">cp orig dest</code></td>
+                        <td><code class="text-powershell">cp</code> ou <code class="text-powershell">Copy-Item</code></td>
+                        <td><code class="text-cmd">copy orig dest</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Mover/Renomear</td>
+                        <td><code class="text-linux">mv velho novo</code></td>
+                        <td><code class="text-powershell">mv</code> ou <code class="text-powershell">Move-Item</code></td>
+                        <td><code class="text-cmd">move velho novo</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Apagar arquivo</td>
+                        <td><code class="text-linux">rm arq</code></td>
+                        <td><code class="text-powershell">rm</code> ou <code class="text-powershell">Remove-Item</code></td>
+                        <td><code class="text-cmd">del arq</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Ver conteúdo</td>
+                        <td><code class="text-linux">cat arq.txt</code></td>
+                        <td><code class="text-powershell">cat</code> ou <code class="text-powershell">Get-Content</code></td>
+                        <td><code class="text-cmd">type arq.txt</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium text-white">Ajuda</td>
+                        <td><code class="text-linux">man comando</code></td>
+                        <td><code class="text-powershell">Get-Help cmd</code></td>
+                        <td><code class="text-cmd">comando /?</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-top10')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Top 10 Essenciais <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-top10" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-mono font-bold border border-violet-500/20">PASSO 2</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Top 10 Comandos do Dia a Dia</h2>
+          <p class="text-muted mt-2">Você usará estes comandos em 90% do seu tempo como programador.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+            
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">1</span> Listar</h3>
+                    <i data-lucide="list" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Vê o que tem dentro da pasta atual.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-linux">ls -la</span> <span class="text-muted opacity-50">Linux (Detalhado)</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-powershell">ls</span> <span class="text-muted opacity-50">PowerShell</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">2</span> Navegar (CD)</h3>
+                    <i data-lucide="folder-open" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Entra e sai de pastas. Igual em todos.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">cd nome_pasta</span> <span class="text-muted opacity-50">Entrar</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">cd ..</span> <span class="text-muted opacity-50">Voltar</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">3</span> Criar Pasta</h3>
+                    <i data-lucide="folder-plus" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Organize seus projetos.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">mkdir projeto_flask</span> <span class="text-muted opacity-50">Universal</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">4</span> Criar Arquivo</h3>
+                    <i data-lucide="file-plus" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Cria um arquivo vazio para começar.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-linux">touch app.py</span> <span class="text-muted opacity-50">Linux</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-powershell">ni app.py</span> <span class="text-muted opacity-50">PowerShell (New-Item)</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">5</span> Privilégio Admin</h3>
+                    <i data-lucide="shield-alert" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Executar comando como Administrador.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-linux">sudo apt update</span> <span class="text-muted opacity-50">Linux</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-powershell">runas /user:Admin cmd</span> <span class="text-muted opacity-50">Windows</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">6</span> Testar Rede</h3>
+                    <i data-lucide="wifi" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Verifica se um site ou IP está respondendo.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">ping google.com</span> <span class="text-muted opacity-50">Universal</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">7</span> Buscar Texto</h3>
+                    <i data-lucide="search" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Encontra uma palavra dentro de arquivos.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-linux">grep "erro" log.txt</span> <span class="text-muted opacity-50">Linux</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-powershell">sls "erro" log.txt</span> <span class="text-muted opacity-50">PowerShell (Select-String)</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">8</span> Histórico</h3>
+                    <i data-lucide="history" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">O que eu digitei antes? (Use Seta Cima para navegar).</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">history</span> <span class="text-muted opacity-50">Linux/PS</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-cmd">F7</span> <span class="text-muted opacity-50">CMD (Janela)</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">9</span> IP da Máquina</h3>
+                    <i data-lucide="network" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Descobrir seu endereço na rede.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-linux">ip addr</span> <span class="text-muted opacity-50">Linux</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">ipconfig</span> <span class="text-muted opacity-50">Windows</span></div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border p-4 rounded-lg hover:border-accent transition group">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-white font-bold flex items-center gap-2"><span class="bg-accent/20 text-accent w-6 h-6 rounded flex items-center justify-center text-xs">10</span> Onde estou?</h3>
+                    <i data-lucide="map-pin" class="text-muted w-4 h-4"></i>
+                </div>
+                <p class="text-sm text-muted mb-3">Mostra o caminho completo da pasta atual.</p>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-white">pwd</span> <span class="text-muted opacity-50">Linux / PowerShell</span></div>
+                    <div class="flex justify-between text-xs font-mono bg-black/30 p-1.5 rounded"><span class="text-cmd">cd</span> <span class="text-muted opacity-50">CMD (sem argumentos)</span></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex justify-between pt-6">
+            <button onclick="showStep('step-basics')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-top20')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Top 20 <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <div id="step-top20" class="step-content space-y-8">
+        <div class="border-b border-border pb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20">PASSO 3</span>
+          </div>
+          <h2 class="text-3xl font-bold text-white">Power User: +10 Comandos</h2>
+          <p class="text-muted mt-2">Expanda seus poderes para controle de processos e rede.</p>
+        </div>
+
+        <div class="space-y-2">
+            <div class="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-bold text-muted uppercase tracking-wider">
+                <div class="col-span-1">#</div>
+                <div class="col-span-4">Comando Linux</div>
+                <div class="col-span-7">O que faz? (Windows equivalente)</div>
+            </div>
+
+            <div class="bg-card border border-border rounded-lg divide-y divide-border">
+                
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">11</div>
+                    <div class="col-span-4 font-mono text-linux">curl url</div>
+                    <div class="col-span-7 text-sm text-muted">Faz requisição Web (API). Win: <code class="text-powershell">curl</code> ou <code class="text-powershell">Invoke-WebRequest</code></div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">12</div>
+                    <div class="col-span-4 font-mono text-linux">ssh user@ip</div>
+                    <div class="col-span-7 text-sm text-muted">Conecta em servidor remoto. Win: <code class="text-white">ssh</code> (Nativo no Win10+)</div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">13</div>
+                    <div class="col-span-4 font-mono text-linux">ps aux</div>
+                    <div class="col-span-7 text-sm text-muted">Lista processos rodando. Win: <code class="text-powershell">Get-Process</code> ou <code class="text-cmd">tasklist</code></div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">14</div>
+                    <div class="col-span-4 font-mono text-linux">kill pid</div>
+                    <div class="col-span-7 text-sm text-muted">Mata um processo travado. Win: <code class="text-powershell">Stop-Process</code> ou <code class="text-cmd">taskkill</code></div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">15</div>
+                    <div class="col-span-4 font-mono text-linux">chmod +x file</div>
+                    <div class="col-span-7 text-sm text-muted">Altera permissão (tornar executável). Win: <code class="text-cmd">icacls</code> (Complexo)</div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">16</div>
+                    <div class="col-span-4 font-mono text-linux">whoami</div>
+                    <div class="col-span-7 text-sm text-muted">Qual usuário está logado? Win: <code class="text-white">whoami</code> (Universal)</div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">17</div>
+                    <div class="col-span-4 font-mono text-linux">top / htop</div>
+                    <div class="col-span-7 text-sm text-muted">Gerenciador de tarefas no terminal. Win: Não tem nativo (Gerenciador de Tarefas GUI)</div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">18</div>
+                    <div class="col-span-4 font-mono text-linux">zip -r arq.zip .</div>
+                    <div class="col-span-7 text-sm text-muted">Compactar pasta. Win: <code class="text-powershell">Compress-Archive</code></div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">19</div>
+                    <div class="col-span-4 font-mono text-linux">echo "Ola"</div>
+                    <div class="col-span-7 text-sm text-muted">Imprime texto na tela. Win: <code class="text-white">echo</code> (Universal)</div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-white/5 transition">
+                    <div class="col-span-1 text-accent font-bold">20</div>
+                    <div class="col-span-4 font-mono text-linux">exit</div>
+                    <div class="col-span-7 text-sm text-muted">Fecha o terminal. Win: <code class="text-white">exit</code> (Universal)</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="flex justify-between pt-6 pb-20">
+            <button onclick="showStep('step-top10')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+            <button onclick="showStep('step-intro')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">Finalizar & Voltar <i data-lucide="check-circle" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Inicializar ícones
+    lucide.createIcons();
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const content = document.getElementById(stepId);
+      content.classList.remove('active');
+      void content.offsetWidth; // Trigger reflow
+      content.classList.add('active');
+
+      document.querySelector('main').scrollTop = 0;
+
+      const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+      if (btn) btn.classList.add('active');
+    }
+  </script>
+</body>
+
+</html>
