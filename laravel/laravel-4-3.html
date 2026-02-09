@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Master Class: Laravel Auth & ACL</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: "var(--color-base)",
+                        accent: "var(--color-accent)",
+                        text: "var(--color-text)",
+                        muted: "var(--color-muted)",
+                        card: "var(--color-card)",
+                        border: "var(--color-border)",
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --color-base: #0f172a;
+            --color-accent: #10b981; /* Emerald (Success/Completed) */
+            --color-text: #f8fafc;
+            --color-muted: #94a3b8;
+            --color-card: #1e293b;
+            --color-border: #334155;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                radial-gradient(circle at 20px 20px, rgba(16, 185, 129, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+        pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            margin: 0;
+        }
+
+        code { font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #e2e8f0; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        .nav-item.active { background-color: var(--color-accent); color: white; border-color: var(--color-accent); }
+        
+        .file-path {
+            background-color: #f59e0b;
+            color: black;
+            font-weight: bold;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Syntax */
+        .k { color: #ff79c6; }
+        .s { color: #f1fa8c; }
+        .f { color: #50fa7b; }
+        .c { color: #6272a4; font-style: italic; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+    <aside class="w-full md:w-80 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+        <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="check-circle-2" class="text-accent w-7 h-7"></i>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-500">
+                        Laravel Master
+                    </h1>
+                    <p class="text-[10px] text-muted uppercase tracking-widest">Guia Corrigido e Validado</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">0</span>
+                <span>Visão Geral</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="server" class="w-3 h-3"></i> Backend & Config
+            </div>
+
+            <button onclick="showStep('step-setup')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">1</span>
+                <span>Configuração Inicial</span>
+            </button>
+
+            <button onclick="showStep('step-db')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Banco, Model e Seeder</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="shield" class="w-3 h-3"></i> Segurança e Lógica
+            </div>
+
+            <button onclick="showStep('step-middleware')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">3</span>
+                <span>Middleware Admin</span>
+            </button>
+
+            <button onclick="showStep('step-controller')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">4</span>
+                <span>Controller de Auth</span>
+            </button>
+
+            <button onclick="showStep('step-routes')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">5</span>
+                <span>Rotas (Web.php)</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="layout" class="w-3 h-3"></i> Frontend (Views)
+            </div>
+
+            <button onclick="showStep('step-views-auth')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">6</span>
+                <span>Views de Login/Registro</span>
+            </button>
+
+            <button onclick="showStep('step-views-app')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">7</span>
+                <span>Dashboard & Admin</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+        <div class="max-w-5xl mx-auto pb-20">
+
+            <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+                <div class="border-b border-border pb-6">
+                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Treinamento Completo
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Manual de Implementação</h2>
+                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
+                        Este guia contém todas as correções (Rotas, Imports, Middleware, Views) organizadas na sequência exata de execução. Siga passo a passo para criar uma aplicação segura e funcional.
+                    </p>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button onclick="showStep('step-setup')" class="bg-accent hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg">
+                        Começar do Zero <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-setup" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">1. Configuração Inicial</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-path">Terminal</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-bash">composer create-project laravel/laravel auth-master
+cd auth-master</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">Arquivo .env</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-properties">DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_master_db
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
+                        </div>
+                        <p class="text-xs text-muted mt-1">⚠️ Crie o banco <code>laravel_master_db</code> no MySQL antes de continuar.</p>
+                    </div>
+
+                    <div>
+                        <div class="file-path">config/app.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php">'timezone' => 'America/Sao_Paulo',
+'locale' => 'pt_BR',</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-db')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Banco <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-db" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">2. Estrutura de Dados</h2>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-path">database/migrations/xxxx_create_users_table.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">public function</span> <span class="f">up</span>(): <span class="k">void</span> {
+    Schema::<span class="f">create</span>(<span class="s">'users'</span>, <span class="k">function</span> (Blueprint <span class="v">$table</span>) {
+        <span class="v">$table</span>-><span class="f">id</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'name'</span>);
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'email'</span>)-><span class="f">unique</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'telefone'</span>)-><span class="f">nullable</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'role'</span>)-><span class="f">default</span>(<span class="s">'user'</span>); <span class="c">// Admin ou User</span>
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'password'</span>);
+        <span class="v">$table</span>-><span class="f">rememberToken</span>();
+        <span class="v">$table</span>-><span class="f">timestamps</span>();
+    });
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">app/Models/User.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">protected</span> <span class="v">$fillable</span> = [
+    <span class="s">'name'</span>, <span class="s">'email'</span>, <span class="s">'password'</span>, <span class="s">'telefone'</span>, <span class="s">'role'</span>
+];</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">database/seeders/DatabaseSeeder.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">use</span> App\Models\User;
+<span class="k">use</span> Illuminate\Support\Facades\Hash;
+
+<span class="k">public function</span> <span class="f">run</span>(): <span class="k">void</span> {
+    User::<span class="f">create</span>([
+        <span class="s">'name'</span> => <span class="s">'Admin Supremo'</span>,
+        <span class="s">'email'</span> => <span class="s">'admin@sistema.com'</span>,
+        <span class="s">'telefone'</span> => <span class="s">'(11) 99999-9999'</span>,
+        <span class="s">'password'</span> => Hash::<span class="f">make</span>(<span class="s">'1234'</span>),
+        <span class="s">'role'</span> => <span class="s">'admin'</span>
+    ]);
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">Terminal</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-bash">php artisan migrate:fresh --seed</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-setup')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-middleware')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Segurança <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-middleware" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">3. Segurança (Middleware)</h2>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">php artisan make:middleware IsAdmin</code></pre>
+                    </div>
+
+                    <div>
+                        <div class="file-path">app/Http/Middleware/IsAdmin.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">public function</span> <span class="f">handle</span>(Request <span class="v">$request</span>, Closure <span class="v">$next</span>): Response
+{
+    <span class="k">if</span> (!auth()-><span class="f">check</span>() || auth()-><span class="f">user</span>()->role !== <span class="s">'admin'</span>) {
+        <span class="f">abort</span>(403, <span class="s">'Acesso Negado.'</span>);
+    }
+    <span class="k">return</span> <span class="v">$next</span>(<span class="v">$request</span>);
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">bootstrap/app.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php">-><span class="f">withMiddleware</span>(<span class="k">function</span> (Middleware <span class="v">$middleware</span>) {
+    <span class="v">$middleware</span>-><span class="f">alias</span>([
+        <span class="s">'is_admin'</span> => \App\Http\Middleware\IsAdmin::<span class="k">class</span>,
+    ]);
+})</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-db')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-controller')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Controller <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-controller" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">4. Controller de Autenticação</h2>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">php artisan make:controller AuthController</code></pre>
+                    </div>
+
+                    <div>
+                        <div class="file-path">app/Http/Controllers/AuthController.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                            <pre class="!border-0"><code class="language-php"><span class="k">namespace</span> App\Http\Controllers;
+<span class="k">use</span> App\Models\User;
+<span class="k">use</span> Illuminate\Http\Request;
+<span class="k">use</span> Illuminate\Support\Facades\Auth;
+<span class="k">use</span> Illuminate\Support\Facades\Hash;
+
+<span class="k">class</span> <span class="class">AuthController</span> <span class="k">extends</span> Controller {
+    <span class="k">public function</span> <span class="f">showLogin</span>() { <span class="k">return</span> <span class="f">view</span>(<span class="s">'auth.login'</span>); }
+    <span class="k">public function</span> <span class="f">showRegister</span>() { <span class="k">return</span> <span class="f">view</span>(<span class="s">'auth.register'</span>); }
+
+    <span class="k">public function</span> <span class="f">register</span>(Request <span class="v">$request</span>) {
+        <span class="v">$dados</span> = <span class="v">$request</span>-><span class="f">validate</span>([
+            <span class="s">'name'</span> => <span class="s">'required'</span>,
+            <span class="s">'email'</span> => <span class="s">'required|email|unique:users'</span>,
+            <span class="s">'telefone'</span> => <span class="s">'required'</span>,
+            <span class="s">'password'</span> => <span class="s">'required|min:4'</span>
+        ]);
+        <span class="v">$user</span> = User::<span class="f">create</span>([
+            <span class="s">'name'</span> => <span class="v">$dados</span>[<span class="s">'name'</span>],
+            <span class="s">'email'</span> => <span class="v">$dados</span>[<span class="s">'email'</span>],
+            <span class="s">'telefone'</span> => <span class="v">$dados</span>[<span class="s">'telefone'</span>],
+            <span class="s">'password'</span> => Hash::<span class="f">make</span>(<span class="v">$dados</span>[<span class="s">'password'</span>])
+        ]);
+        Auth::<span class="f">login</span>(<span class="v">$user</span>);
+        <span class="k">return</span> <span class="f">redirect</span>()-><span class="f">route</span>(<span class="s">'dashboard'</span>);
+    }
+
+    <span class="k">public function</span> <span class="f">login</span>(Request <span class="v">$request</span>) {
+        <span class="k">if</span> (Auth::<span class="f">attempt</span>(<span class="v">$request</span>-><span class="f">only</span>(<span class="s">'email'</span>, <span class="s">'password'</span>))) {
+            <span class="v">$request</span>-><span class="f">session</span>()-><span class="f">regenerate</span>();
+            <span class="k">return</span> <span class="f">redirect</span>()-><span class="f">route</span>(<span class="s">'dashboard'</span>);
+        }
+        <span class="k">return</span> <span class="f">back</span>()-><span class="f">withErrors</span>([<span class="s">'email'</span> => <span class="s">'Inválido'</span>]);
+    }
+
+    <span class="k">public function</span> <span class="f">logout</span>(Request <span class="v">$request</span>) {
+        Auth::<span class="f">logout</span>();
+        <span class="v">$request</span>-><span class="f">session</span>()-><span class="f">invalidate</span>();
+        <span class="k">return</span> <span class="f">redirect</span>()-><span class="f">route</span>(<span class="s">'login'</span>);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-middleware')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-routes')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Rotas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-routes" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">5. Rotas</h2>
+                </div>
+                <div>
+                    <div class="file-path">routes/web.php</div>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                        <pre class="!border-0"><code class="language-php"><span class="k">use</span> Illuminate\Support\Facades\Route;
+<span class="k">use</span> App\Http\Controllers\AuthController;
+<span class="k">use</span> App\Models\User; <span class="c">// OBRIGATÓRIO TER ISSO</span>
+
+Route::<span class="f">get</span>(<span class="s">'/'</span>, <span class="k">fn</span>() => <span class="f">redirect</span>()-><span class="f">route</span>(<span class="s">'login'</span>));
+
+<span class="c">// Guest</span>
+Route::<span class="f">get</span>(<span class="s">'/login'</span>, [AuthController::<span class="k">class</span>, <span class="s">'showLogin'</span>])-><span class="f">name</span>(<span class="s">'login'</span>);
+Route::<span class="f">post</span>(<span class="s">'/login'</span>, [AuthController::<span class="k">class</span>, <span class="s">'login'</span>]);
+Route::<span class="f">get</span>(<span class="s">'/register'</span>, [AuthController::<span class="k">class</span>, <span class="s">'showRegister'</span>])-><span class="f">name</span>(<span class="s">'register'</span>);
+Route::<span class="f">post</span>(<span class="s">'/register'</span>, [AuthController::<span class="k">class</span>, <span class="s">'register'</span>]);
+
+<span class="c">// Logados</span>
+Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span class="f">group</span>(<span class="k">function</span> () {
+    Route::<span class="f">get</span>(<span class="s">'/dashboard'</span>, <span class="k">fn</span>() => <span class="f">view</span>(<span class="s">'dashboard'</span>))-><span class="f">name</span>(<span class="s">'dashboard'</span>);
+    Route::<span class="f">post</span>(<span class="s">'/logout'</span>, [AuthController::<span class="k">class</span>, <span class="s">'logout'</span>])-><span class="f">name</span>(<span class="s">'logout'</span>);
+});
+
+<span class="c">// Admin</span>
+Route::<span class="f">middleware</span>([<span class="s">'auth'</span>, <span class="s">'is_admin'</span>])-><span class="f">prefix</span>(<span class="s">'admin'</span>)-><span class="f">group</span>(<span class="k">function</span> () {
+    Route::<span class="f">get</span>(<span class="s">'/relatorios'</span>, <span class="k">function</span> () {
+        <span class="v">$totalUsers</span> = User::<span class="f">count</span>();
+        <span class="v">$users</span> = User::<span class="f">orderBy</span>(<span class="s">'id'</span>, <span class="s">'desc'</span>)-><span class="f">take</span>(10)-><span class="f">get</span>();
+        <span class="k">return</span> <span class="f">view</span>(<span class="s">'admin.reports'</span>, <span class="f">compact</span>(<span class="s">'totalUsers'</span>, <span class="s">'users'</span>));
+    })-><span class="f">name</span>(<span class="s">'admin.relatorios'</span>);
+});</code></pre>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-controller')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-views-auth')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Views Auth <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-views-auth" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">6. Views de Autenticação</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-path">resources/views/layout.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;&lt;/head&gt;
+&lt;body class="bg-slate-900 text-white h-screen flex items-center justify-center font-sans"&gt;
+    @yield('content')
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">resources/views/auth/login.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">@extends('layout')
+@section('content')
+&lt;form action="{{ route('login') }}" method="POST" class="bg-slate-800 p-8 rounded-xl space-y-4 w-96"&gt;
+    @csrf
+    &lt;h2 class="text-xl font-bold mb-4"&gt;Login&lt;/h2&gt;
+    &lt;input name="email" type="email" placeholder="Email" class="w-full bg-slate-900 border border-slate-700 p-2 rounded" required&gt;
+    &lt;input name="password" type="password" placeholder="Senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded" required&gt;
+    &lt;button class="w-full bg-emerald-600 p-2 rounded font-bold"&gt;Entrar&lt;/button&gt;
+    &lt;a href="{{ route('register') }}" class="block text-center text-sm text-slate-400"&gt;Criar conta&lt;/a&gt;
+&lt;/form&gt;
+@endsection</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">resources/views/auth/register.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">@extends('layout')
+@section('content')
+&lt;form action="{{ route('register') }}" method="POST" class="bg-slate-800 p-8 rounded-xl space-y-4 w-96"&gt;
+    @csrf
+    &lt;h2 class="text-xl font-bold mb-4"&gt;Cadastro&lt;/h2&gt;
+    &lt;input name="name" placeholder="Nome" class="w-full bg-slate-900 border border-slate-700 p-2 rounded"&gt;
+    &lt;input name="email" placeholder="Email" class="w-full bg-slate-900 border border-slate-700 p-2 rounded"&gt;
+    &lt;input name="telefone" placeholder="Telefone" class="w-full bg-slate-900 border border-slate-700 p-2 rounded"&gt;
+    &lt;input name="password" type="password" placeholder="Senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded"&gt;
+    &lt;button class="w-full bg-emerald-600 p-2 rounded font-bold"&gt;Cadastrar&lt;/button&gt;
+&lt;/form&gt;
+@endsection</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-routes')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-views-app')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-views-app" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">7. Views Principais</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-path">resources/views/dashboard.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                            <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;&lt;/head&gt;
+&lt;body class="bg-slate-900 text-white flex h-screen"&gt;
+    &lt;aside class="w-64 bg-slate-800 p-4 flex flex-col"&gt;
+        &lt;h1 class="text-xl font-bold mb-8"&gt;Sistema&lt;/h1&gt;
+        <span class="text-accent font-bold">@if(auth()->user()->role === 'admin')</span>
+            &lt;a href="{{ route('admin.relatorios') }}" class="p-2 bg-red-600 rounded mb-2 block"&gt;📊 Relatórios&lt;/a&gt;
+        <span class="text-accent font-bold">@endif</span>
+        &lt;form action="{{ route('logout') }}" method="POST" class="mt-auto"&gt;@csrf &lt;button&gt;Sair&lt;/button&gt;&lt;/form&gt;
+    &lt;/aside&gt;
+    &lt;main class="p-8"&gt;
+        &lt;h2&gt;Olá, {{ auth()->user()->name }}&lt;/h2&gt;
+    &lt;/main&gt;
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-path">resources/views/admin/reports.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                            <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;&lt;/head&gt;
+&lt;body class="bg-slate-900 text-white p-8"&gt;
+    &lt;a href="{{ route('dashboard') }}" class="text-slate-400 mb-4 block"&gt;⬅ Voltar&lt;/a&gt;
+    &lt;h1 class="text-3xl font-bold mb-6"&gt;Relatórios&lt;/h1&gt;
+    &lt;div class="bg-slate-800 p-4 rounded mb-6"&gt;Total Usuários: {{ $totalUsers }}&lt;/div&gt;
+    &lt;table class="w-full text-left bg-slate-800 rounded"&gt;
+        &lt;thead class="border-b border-slate-700"&gt;&lt;tr&gt;&lt;th class="p-2"&gt;Nome&lt;/th&gt;&lt;th class="p-2"&gt;Role&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+        &lt;tbody&gt;
+            @foreach($users as $u)
+                &lt;tr class="border-b border-slate-700"&gt;
+                    &lt;td class="p-2"&gt;{{ $u->name }}&lt;/td&gt;
+                    &lt;td class="p-2"&gt;{{ $u->role }}&lt;/td&gt;
+                &lt;/tr&gt;
+            @endforeach
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-6 pb-20">
+                    <button onclick="showStep('step-views-auth')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <div class="text-emerald-400 font-bold flex items-center gap-2 animate-pulse">
+                        <i data-lucide="check-circle"></i> Tudo Pronto! Rode: php artisan serve
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const content = document.getElementById(stepId);
+            content.classList.remove('active');
+            void content.offsetWidth;
+            content.classList.add('active');
+
+            document.querySelector('main').scrollTop = 0;
+
+            const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const parent = button.closest('.rounded-lg');
+            const codeBlock = parent.querySelector('code');
+            
+            navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i>`;
+                button.classList.add('text-green-400');
+                lucide.createIcons();
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('text-green-400');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

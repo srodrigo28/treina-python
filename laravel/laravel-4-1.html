@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-     <title>Laravel Lv.3</title>
+    <title>Treinamento: Laravel Auth Manual</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -42,8 +42,7 @@
     <style>
         :root {
             --color-base: #0f172a;
-            --color-accent: #f59e0b;
-            /* Amber (Learning/Training) */
+            --color-accent: #f59e0b; /* Amber (Learning/Training) */
             --color-text: #f8fafc;
             --color-muted: #94a3b8;
             --color-card: #1e293b;
@@ -57,23 +56,10 @@
             background-size: 32px 32px, 32px 32px;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--color-base);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--color-border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-accent);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
 
         pre {
             background-color: #0d1117;
@@ -84,68 +70,29 @@
             margin: 0;
         }
 
-        code {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.875rem;
-            color: #e2e8f0;
-        }
-
-        .step-content {
-            display: none;
-        }
-
-        .step-content.active {
-            display: block;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        .nav-item.active {
-            background-color: var(--color-accent);
-            color: white;
-            border-color: var(--color-accent);
-        }
-
+        code { font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #e2e8f0; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        .nav-item.active { background-color: var(--color-accent); color: white; border-color: var(--color-accent); }
+        
         /* Syntax Colors */
-        .k {
-            color: #ff79c6;
-        }
-
-        /* keyword */
-        .s {
-            color: #f1fa8c;
-        }
-
-        /* string */
-        .c {
-            color: #6272a4;
-            font-style: italic;
-        }
-
-        /* comment */
-        .f {
-            color: #50fa7b;
-        }
-
-        /* function */
-        .v {
-            color: #f8f8f2;
-        }
-
-        /* variable */
+        .k { color: #ff79c6; } /* keyword */
+        .s { color: #f1fa8c; } /* string */
+        .c { color: #6272a4; font-style: italic; } /* comment */
+        .f { color: #50fa7b; } /* function */
+        .v { color: #f8f8f2; } /* variable */
     </style>
 </head>
 
 <body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
 
     <aside class="w-full md:w-80 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
-
         <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
             <div class="flex items-center gap-2 mb-1">
                 <i data-lucide="graduation-cap" class="text-accent w-7 h-7"></i>
                 <div>
-                    <h1
-                        class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
-                        Laravel Auth Lv.3
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
+                        Laravel Auth
                     </h1>
                     <p class="text-[10px] text-muted uppercase tracking-widest">Modo Manual</p>
                 </div>
@@ -153,10 +100,8 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <button onclick="showStep('step-intro')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">0</span>
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">0</span>
                 <span>Objetivo</span>
             </button>
 
@@ -164,17 +109,13 @@
                 <i data-lucide="settings" class="w-3 h-3"></i> Setup
             </div>
 
-            <button onclick="showStep('step-setup')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">1</span>
+            <button onclick="showStep('step-setup')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">1</span>
                 <span>Projeto & Config</span>
             </button>
 
-            <button onclick="showStep('step-db')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">2</span>
+            <button onclick="showStep('step-db')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">2</span>
                 <span>Migration & Model</span>
             </button>
 
@@ -182,17 +123,13 @@
                 <i data-lucide="code" class="w-3 h-3"></i> Backend
             </div>
 
-            <button onclick="showStep('step-controller')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">3</span>
+            <button onclick="showStep('step-controller')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">3</span>
                 <span>AuthController</span>
             </button>
 
-            <button onclick="showStep('step-routes')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">4</span>
+            <button onclick="showStep('step-routes')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">4</span>
                 <span>Rotas (Web)</span>
             </button>
 
@@ -200,18 +137,14 @@
                 <i data-lucide="layout" class="w-3 h-3"></i> Frontend
             </div>
 
-            <button onclick="showStep('step-layout')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">5</span>
+            <button onclick="showStep('step-layout')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">5</span>
                 <span>Views: Layout & Auth</span>
             </button>
 
-            <button onclick="showStep('step-dashboard')"
-                class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span
-                    class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">6</span>
-                <span>View: Dashboard</span>
+            <button onclick="showStep('step-dashboard')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">6</span>
+                <span class="font-bold text-accent">View: Dashboard (Fix)</span>
             </button>
         </nav>
     </aside>
@@ -224,16 +157,13 @@
                     <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
                         <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Treinamento
                     </span>
-                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Autenticação "Na
-                        Unha"</h2>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Autenticação "Na Unha"</h2>
                     <p class="text-lg text-muted leading-relaxed max-w-2xl">
-                        Vamos criar um sistema completo do zero: cadastro com telefone, login seguro, logout e um
-                        dashboard protegido, sem usar kits prontos.
+                        Vamos criar um sistema completo do zero: cadastro com telefone, login seguro, logout e um dashboard protegido, sem usar kits prontos.
                     </p>
                 </div>
                 <div class="mt-8 flex justify-end">
-                    <button onclick="showStep('step-setup')"
-                        class="bg-accent hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg">
+                    <button onclick="showStep('step-setup')" class="bg-accent hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg">
                         Começar <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -243,7 +173,7 @@
                 <div class="border-b border-border pb-6">
                     <h2 class="text-3xl font-bold text-white">1. Projeto & Configuração</h2>
                 </div>
-
+                
                 <div class="space-y-6">
                     <h3 class="text-white font-bold text-sm">Criar Projeto</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
@@ -252,8 +182,7 @@ cd auth-manual</code></pre>
                     </div>
 
                     <h3 class="text-white font-bold text-sm">Configuração (.env e config/app.php)</h3>
-                    <p class="text-xs text-muted mb-2">Configure o banco <code>laravel_manual</code> e o idioma Brasil.
-                    </p>
+                    <p class="text-xs text-muted mb-2">Configure o banco <code>laravel_manual</code> e o idioma Brasil.</p>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
                         <pre class="!border-0"><code class="language-properties"># .env
 DB_DATABASE=laravel_manual
@@ -265,22 +194,17 @@ DB_PASSWORD=
 'locale' => 'pt_BR',</code></pre>
                     </div>
                 </div>
-
+                
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-intro')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-db')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Banco <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-db')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Banco <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
             <div id="step-db" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
                     <h2 class="text-3xl font-bold text-white">2. Tabela & Model</h2>
-                    <p class="text-muted mt-2">Vamos adicionar o campo <code>telefone</code> na tabela de usuários
-                        padrão.</p>
+                    <p class="text-muted mt-2">Vamos adicionar o campo <code>telefone</code> na tabela de usuários padrão.</p>
                 </div>
 
                 <div class="space-y-6">
@@ -311,19 +235,14 @@ DB_PASSWORD=
                     </div>
 
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal
-                        </div>
+                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal</div>
                         <pre class="!border-0"><code class="language-bash">php artisan migrate</code></pre>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-setup')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-controller')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Controller <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-setup')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-controller')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Controller <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
@@ -335,13 +254,11 @@ DB_PASSWORD=
 
                 <div class="space-y-6">
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre
-                            class="!border-0"><code class="language-bash">php artisan make:controller AuthController</code></pre>
+                        <pre class="!border-0"><code class="language-bash">php artisan make:controller AuthController</code></pre>
                     </div>
 
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <button onclick="copyToClipboard(this)"
-                            class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
                         <pre class="!border-0"><code class="language-php"><span class="k">namespace</span> App\Http\Controllers;
 
 <span class="k">use</span> App\Models\User;
@@ -408,12 +325,8 @@ DB_PASSWORD=
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-db')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-routes')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Rotas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-db')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-routes')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Rotas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
@@ -446,12 +359,8 @@ Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-controller')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-layout')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Views <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-controller')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-layout')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Views <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
@@ -478,8 +387,7 @@ Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span
 
                     <h3 class="text-white font-bold text-sm">resources/views/auth/register.blade.php</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <button onclick="copyToClipboard(this)"
-                            class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
                         <pre class="!border-0"><code class="language-html">@extends('layout')
 
 @section('content')
@@ -533,12 +441,8 @@ Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-routes')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-dashboard')"
-                        class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo:
-                        Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-routes')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-dashboard')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
@@ -548,13 +452,24 @@ Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span
                     <p class="text-muted mt-2">A área que só usuários logados podem ver.</p>
                 </div>
 
-                <div class="bg-card rounded-lg border border-border overflow-hidden">
-                    <button onclick="copyToClipboard(this)"
-                        class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
-                    <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+                <div class="space-y-4">
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg flex gap-3">
+                        <i data-lucide="folder" class="text-yellow-400 w-5 h-5 mt-1"></i>
+                        <div>
+                            <h4 class="text-yellow-400 font-bold text-sm">Onde Salvar?</h4>
+                            <p class="text-sm text-muted">Crie este arquivo em: <code>resources/views/dashboard.blade.php</code></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                        <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
-&lt;body class="bg-slate-900 text-slate-200 flex h-screen"&gt;
+&lt;head&gt;
+    &lt;title&gt;Dashboard&lt;/title&gt;
     &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-900 text-slate-200 flex h-screen"&gt;
     
     &lt;!-- SIDEBAR --&gt;
     &lt;aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col p-4"&gt;
@@ -581,15 +496,13 @@ Route::<span class="f">middleware</span>([<span class="s">'auth'</span>])-><span
     &lt;/main&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
+                    </div>
                 </div>
 
                 <div class="flex justify-between pt-6 pb-20">
-                    <button onclick="showStep('step-layout')"
-                        class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i
-                            data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <div class="text-emerald-400 font-bold flex items-center gap-2 animate-pulse">
-                        <i data-lucide="check-circle"></i> Tudo pronto! Rode:
-                        <span class="bg-green-500 px-5 py-3 rounded-full text-white">php artisan serve</span>
+                    <button onclick="showStep('step-layout')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <div class="text-amber-400 font-bold flex items-center gap-2 animate-pulse">
+                        <i data-lucide="check-circle"></i> Tudo Pronto! Rode: php artisan serve
                     </div>
                 </div>
             </div>

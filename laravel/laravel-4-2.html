@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Treinamento: Perfis de Usuário (Fixed)</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: "var(--color-base)",
+                        accent: "var(--color-accent)",
+                        text: "var(--color-text)",
+                        muted: "var(--color-muted)",
+                        card: "var(--color-card)",
+                        border: "var(--color-border)",
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --color-base: #0f172a;
+            --color-accent: #8b5cf6;
+            --color-text: #f8fafc;
+            --color-muted: #94a3b8;
+            --color-card: #1e293b;
+            --color-border: #334155;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                radial-gradient(circle at 20px 20px, rgba(139, 92, 246, 0.05) 1px, transparent 0);
+            background-size: 32px 32px, 32px 32px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-base); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+        pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            margin: 0;
+        }
+
+        code { font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #e2e8f0; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        .nav-item.active { background-color: var(--color-accent); color: white; border-color: var(--color-accent); }
+        
+        .file-badge {
+            background-color: #f59e0b;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
+        /* Syntax */
+        .k { color: #ff79c6; }
+        .s { color: #f1fa8c; }
+        .f { color: #50fa7b; }
+        .c { color: #6272a4; font-style: italic; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
+
+    <aside class="w-full md:w-80 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+        <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="shield-alert" class="text-accent w-7 h-7"></i>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-500">
+                        Roles & Permissions
+                    </h1>
+                    <p class="text-[10px] text-muted uppercase tracking-widest">Guia Corrigido</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">0</span>
+                <span>Visão Geral</span>
+            </button>
+
+            <button onclick="showStep('step-db')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">1</span>
+                <span>Banco de Dados</span>
+            </button>
+
+            <button onclick="showStep('step-middleware')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">2</span>
+                <span class="text-accent font-bold">Middleware (Segurança)</span>
+            </button>
+
+            <button onclick="showStep('step-routes')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">3</span>
+                <span class="text-accent font-bold">Rotas Protegidas</span>
+            </button>
+
+            <button onclick="showStep('step-view')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">4</span>
+                <span>Dashboard Inteligente</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
+        <div class="max-w-5xl mx-auto pb-20">
+
+            <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
+                <div class="border-b border-border pb-6">
+                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Correção
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Controle de Acesso (ACL)</h2>
+                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
+                        Neste guia, revisei todos os caminhos de arquivo. Vamos adicionar o campo <code>role</code> (papel) e criar um Middleware para proteger a área administrativa.
+                    </p>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button onclick="showStep('step-db')" class="bg-accent hover:bg-violet-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg">
+                        Começar <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-db" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">1. Banco de Dados</h2>
+                    <p class="text-muted mt-2">Precisamos alterar a tabela <code>users</code> para ter uma coluna 'role'.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-badge">database/migrations/xxxx_create_users_table.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">public function</span> <span class="f">up</span>(): <span class="k">void</span>
+{
+    Schema::<span class="f">create</span>(<span class="s">'users'</span>, <span class="k">function</span> (Blueprint <span class="v">$table</span>) {
+        <span class="v">$table</span>-><span class="f">id</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'name'</span>);
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'email'</span>)-><span class="f">unique</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'telefone'</span>)-><span class="f">nullable</span>();
+        
+        <span class="c">// ADICIONE ESTA LINHA: (padrão é 'user')</span>
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'role'</span>)-><span class="f">default</span>(<span class="s">'user'</span>); 
+        
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'password'</span>);
+        <span class="v">$table</span>-><span class="f">timestamps</span>();
+    });
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-badge">app/Models/User.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="k">protected</span> <span class="v">$fillable</span> = [
+    <span class="s">'name'</span>, <span class="s">'email'</span>, <span class="s">'password'</span>, <span class="s">'telefone'</span>, <span class="s">'role'</span>
+];</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal (Resetar Banco)</div>
+                        <pre class="!border-0"><code class="language-bash">php artisan migrate:fresh</code></pre>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-middleware')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Middleware <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-middleware" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">2. O Segurança (Middleware)</h2>
+                    <p class="text-muted mt-2">Aqui está o segredo. Vamos criar o arquivo que barra quem não é admin.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-bash">php artisan make:middleware IsAdmin</code></pre>
+                    </div>
+
+                    <div>
+                        <div class="file-badge">app/Http/Middleware/IsAdmin.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                            <pre class="!border-0"><code class="language-php"><span class="k">public function</span> <span class="f">handle</span>(Request <span class="v">$request</span>, Closure <span class="v">$next</span>): Response
+{
+    <span class="c">// Verifica se o usuário logado NÃO é admin</span>
+    <span class="k">if</span> (!auth()-><span class="f">check</span>() || auth()-><span class="f">user</span>()->role !== <span class="s">'admin'</span>) {
+        <span class="f">abort</span>(403, <span class="s">'Acesso Negado: Área Restrita.'</span>);
+    }
+
+    <span class="k">return</span> <span class="v">$next</span>(<span class="v">$request</span>);
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="file-badge">bootstrap/app.php</div>
+                        <p class="text-xs text-muted mb-2">No Laravel 11, registramos o middleware aqui. Procure a linha <code>withMiddleware</code>.</p>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-php"><span class="c">// ... código anterior ...</span>
+-><span class="f">withMiddleware</span>(<span class="k">function</span> (Middleware <span class="v">$middleware</span>) {
+    
+    <span class="c">// Adicione este Alias:</span>
+    <span class="v">$middleware</span>-><span class="f">alias</span>([
+        <span class="s">'is_admin'</span> => \App\Http\Middleware\IsAdmin::<span class="k">class</span>,
+    ]);
+
+})
+<span class="c">// ... código posterior ...</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-db')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-routes')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Rotas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-routes" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">3. Rotas Protegidas</h2>
+                    <p class="text-muted mt-2">Vamos aplicar o apelido <code>is_admin</code> nas rotas.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-badge">routes/web.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                            <pre class="!border-0"><code class="language-php"><span class="k">use</span> Illuminate\Support\Facades\Route;
+
+<span class="c">// ... suas rotas de login aqui ...</span>
+
+<span class="c">// GRUPO DE ROTAS SÓ PARA ADMIN</span>
+Route::<span class="f">middleware</span>([<span class="s">'auth'</span>, <span class="s">'is_admin'</span>]) <span class="c">// Aplica auth E admin</span>
+    -><span class="f">prefix</span>(<span class="s">'admin'</span>) <span class="c">// URL será /admin/relatorios</span>
+    -><span class="f">group</span>(<span class="k">function</span> () {
+    
+    Route::<span class="f">get</span>(<span class="s">'/relatorios'</span>, <span class="k">function</span>() {
+        <span class="k">return</span> <span class="s">"&lt;h1&gt;Área Financeira (Somente Admin)&lt;/h1&gt;"</span>;
+    });
+
+    <span class="c">// Aqui você coloca rotas para deletar usuários, ver logs, etc.</span>
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-middleware')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-view')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="step-view" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">4. Dashboard Inteligente</h2>
+                    <p class="text-muted mt-2">Vamos esconder o botão de relatórios para quem não é admin.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <div class="file-badge">resources/views/dashboard.blade.php</div>
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <pre class="!border-0"><code class="language-html">&lt;aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col p-4"&gt;
+    &lt;h1 class="text-2xl font-bold text-white mb-8"&gt;DashApp&lt;/h1&gt;
+    
+    &lt;nav class="flex-1 space-y-2"&gt;
+        &lt;a href="#" class="block bg-amber-600 text-white p-3 rounded"&gt;🏠 Home&lt;/a&gt;
+        
+        &lt;!-- LÓGICA DO BLADE PARA ADMIN --&gt;
+        <span class="k">@if</span>(auth()->user()->role === <span class="s">'admin'</span>)
+            &lt;div class="mt-6 mb-2 text-xs text-slate-500 uppercase tracking-widest px-3"&gt;
+                Admin Zone
+            &lt;/div&gt;
+            &lt;a href="/admin/relatorios" class="block hover:bg-red-900/50 text-red-400 p-3 rounded border border-red-900/0 hover:border-red-900 transition"&gt;
+                📊 Ver Relatórios
+            &lt;/a&gt;
+        <span class="k">@endif</span>
+        
+    &lt;/nav&gt;
+    
+    &lt;!-- ... logout ... --&gt;
+&lt;/aside&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-lg">
+                        <h4 class="text-emerald-400 font-bold mb-2">Como Testar?</h4>
+                        <ol class="list-decimal list-inside text-sm text-emerald-200 space-y-2">
+                            <li>Cadastre um usuário novo (ele será 'user'). Tente acessar <code>/admin/relatorios</code>. Deve dar erro 403.</li>
+                            <li>Vá no banco de dados e mude o campo <code>role</code> desse usuário para <code>admin</code>.</li>
+                            <li>Atualize a página. O botão "Ver Relatórios" deve aparecer e a rota deve funcionar!</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-6 pb-20">
+                    <button onclick="showStep('step-routes')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-intro')" class="bg-accent hover:bg-violet-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg">Missão Cumprida <i data-lucide="check-circle" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const content = document.getElementById(stepId);
+            content.classList.remove('active');
+            void content.offsetWidth;
+            content.classList.add('active');
+
+            document.querySelector('main').scrollTop = 0;
+
+            const btn = document.querySelector(`button[onclick="showStep('${stepId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const parent = button.closest('.rounded-lg');
+            const codeBlock = parent.querySelector('code');
+            
+            navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i>`;
+                button.classList.add('text-green-400');
+                lucide.createIcons();
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('text-green-400');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

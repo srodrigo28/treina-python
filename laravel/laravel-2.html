@@ -4,10 +4,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tutorial: Laravel CRUD & DB</title>
+     <title>Laravel Lv.2</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
@@ -57,7 +56,6 @@
             background-size: 32px 32px, 32px 32px;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--color-base); }
         ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
@@ -72,34 +70,23 @@
             margin: 0;
         }
 
-        code {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.875rem;
-            color: #e2e8f0;
-        }
-
+        code { font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #e2e8f0; }
         .step-content { display: none; }
         .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
-
-        .nav-item.active {
-            background-color: var(--color-accent);
-            color: white;
-            border-color: var(--color-accent);
-        }
-
-        /* PHP Syntax Highlighting Fake */
-        .php-tag { color: #f87171; }
-        .func { color: #60a5fa; }
-        .str { color: #a3e635; }
-        .var { color: #c084fc; }
-        .comment { color: #64748b; font-style: italic; }
-        .class { color: #fbbf24; }
+        .nav-item.active { background-color: var(--color-accent); color: white; border-color: var(--color-accent); }
+        
+        /* Syntax */
+        .k { color: #ff79c6; } /* keyword */
+        .s { color: #f1fa8c; } /* string */
+        .c { color: #6272a4; font-style: italic; } /* comment */
+        .f { color: #50fa7b; } /* function */
+        .v { color: #f8f8f2; } /* variable */
     </style>
 </head>
 
 <body class="min-h-screen bg-base text-text bg-pattern flex flex-col md:flex-row overflow-hidden font-sans">
 
-    <aside class="w-full md:w-72 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
+    <aside class="w-full md:w-80 bg-card border-r border-border flex flex-col h-auto md:h-screen z-10 shadow-xl">
         <div class="p-6 border-b border-border bg-base/50 backdrop-blur-sm">
             <div class="flex items-center gap-2 mb-1">
                 <i data-lucide="database-zap" class="text-accent w-6 h-6"></i>
@@ -107,439 +94,447 @@
                     Laravel Lv.2
                 </h1>
             </div>
-            <p class="text-xs text-muted">MVC, Database & CRUD</p>
+            <p class="text-xs text-muted">CRUD & Seeds (20 items)</p>
         </div>
 
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            
             <button onclick="showStep('step-intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 active group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">0</span>
-                <span>O Plano</span>
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">0</span>
+                <span>Início</span>
             </button>
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="code" class="w-3 h-3"></i> Estrutura
+                <i data-lucide="database" class="w-3 h-3"></i> Banco de Dados
             </div>
 
-            <button onclick="showStep('step-controller')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">1</span>
-                <span>Controller & Rotas</span>
-            </button>
-
-            <button onclick="showStep('step-blade')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">2</span>
-                <span>Views com Blade</span>
-            </button>
-
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="server" class="w-3 h-3"></i> Banco de Dados
-            </div>
-
-            <button onclick="showStep('step-mysql')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">3</span>
-                <span>Configurando MySQL</span>
+            <button onclick="showStep('step-config')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">1</span>
+                <span>.env & Config</span>
             </button>
 
             <button onclick="showStep('step-migration')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">4</span>
-                <span>Migration (Tabela)</span>
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">2</span>
+                <span>Migration & Model</span>
             </button>
 
-            <button onclick="showStep('step-seeder')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">5</span>
-                <span>Seeds (Dados Fakes)</span>
+            <button onclick="showStep('step-seeds')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">3</span>
+                <span class="text-accent font-bold">Seeds (20 Tarefas)</span>
             </button>
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="cpu" class="w-3 h-3"></i> Lógica
+                <i data-lucide="cpu" class="w-3 h-3"></i> Backend
             </div>
 
-            <button onclick="showStep('step-crud')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">6</span>
-                <span>CRUD Upsert</span>
+            <button onclick="showStep('step-controller')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">4</span>
+                <span>Controller (Lógica)</span>
             </button>
 
-            <button onclick="showStep('step-features')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">7</span>
-                <span>Busca & Check</span>
+            <button onclick="showStep('step-routes')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">5</span>
+                <span>Rotas (web.php)</span>
             </button>
 
-            <button onclick="showStep('step-pagination')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
-                <span class="grid place-items-center w-6 h-6 rounded bg-white/10 text-xs font-mono group-hover:bg-white/20 transition">8</span>
-                <span>Paginação</span>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="monitor" class="w-3 h-3"></i> Frontend
+            </div>
+
+            <button onclick="showStep('step-layout')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">6</span>
+                <span>View: Layout Principal</span>
+            </button>
+
+            <button onclick="showStep('step-view')" class="nav-item w-full text-left px-4 py-3 rounded-lg border border-transparent hover:bg-white/5 transition flex items-center gap-3 group">
+                <span class="grid place-items-center w-5 h-5 rounded bg-white/10 text-[10px] font-mono group-hover:bg-white/20 transition">7</span>
+                <span>View: Dashboard</span>
             </button>
         </nav>
     </aside>
 
     <main class="flex-1 h-screen overflow-y-auto p-6 md:p-12 relative scroll-smooth">
-        <div class="max-w-4xl mx-auto pb-20">
+        <div class="max-w-5xl mx-auto pb-20">
 
             <div id="step-intro" class="step-content active space-y-8 animate-fade-in">
                 <div class="border-b border-border pb-6">
-                    <span class="text-accent text-sm font-bold tracking-wider uppercase flex items-center gap-2 mb-2">
-                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Módulo 2
-                    </span>
-                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Mãos na Massa</h2>
-                    <p class="text-lg text-muted leading-relaxed max-w-2xl">
-                        Vamos construir um Gerenciador de Tarefas completo. Você vai aprender a manipular dados, criar interfaces bonitas com Blade e configurar o banco de dados.
+                    <h2 class="text-4xl font-bold text-white mb-4">CRUD & Seeds</h2>
+                    <p class="text-lg text-muted">
+                        Neste módulo corrigido, vamos adicionar o campo <strong>Descrição</strong> e criar um <strong>Seeder</strong> que gera automaticamente 20 tarefas para testar a paginação.
                     </p>
                 </div>
-
-                <div class="bg-base/50 border border-border p-4 rounded-xl flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400">
-                            <i data-lucide="book" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-bold">Módulo 1</h4>
-                            <p class="text-xs text-muted">Instalação e Introdução</p>
-                        </div>
-                    </div>
-                    <a href="laravel-intro.html" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold rounded-lg transition shadow-lg shadow-orange-500/20 flex items-center gap-2">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
-                    </a>
-                </div>
-
                 <div class="mt-8 flex justify-end">
-                    <button onclick="showStep('step-controller')" class="bg-accent hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-1">
-                        Iniciar Desenvolvimento <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    <button onclick="showStep('step-config')" class="bg-accent hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-lg">
+                        Iniciar <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="step-controller" class="step-content space-y-8">
+            <div id="step-config" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Controller e Rotas</h2>
-                    <p class="text-muted mt-2">O Controlador gerencia a lógica. As Rotas dizem qual controlador chamar.</p>
+                    <h2 class="text-3xl font-bold text-white">1. Configuração do Ambiente</h2>
                 </div>
-
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">1. Criar o Controller</h3>
+                <div class="space-y-6">
+                    <h3 class="text-white font-bold text-sm">Arquivo .env</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-bash">php artisan make:controller TaskController</code></pre>
+                        <pre class="!border-0"><code class="language-properties">DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_tasks
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
                     </div>
-
-                    <h3 class="text-white font-bold text-sm mt-4">2. Definir Rotas (routes/web.php)</h3>
+                    
+                    <h3 class="text-white font-bold text-sm">Arquivo config/app.php</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted font-mono flex justify-between">
-                            <span>routes/web.php</span>
-                            <button onclick="copyToClipboard(this)" class="hover:text-white flex gap-1"><i data-lucide="copy" class="w-3 h-3"></i></button>
-                        </div>
-                        <pre class="!border-0"><code class="language-php"><span class="php-tag">&lt;?php</span>
-<span class="keyword">use</span> App\Http\Controllers\TaskController;
-<span class="keyword">use</span> Illuminate\Support\Facades\Route;
-
-<span class="comment">// Define todas as rotas do CRUD automaticamente</span>
-Route::<span class="func">get</span>(<span class="str">'/'</span>, [TaskController::<span class="class">class</span>, <span class="str">'index'</span>])-><span class="func">name</span>(<span class="str">'home'</span>);
-Route::<span class="func">post</span>(<span class="str">'/task'</span>, [TaskController::<span class="class">class</span>, <span class="str">'store'</span>])-><span class="func">name</span>(<span class="str">'task.store'</span>);
-Route::<span class="func">delete</span>(<span class="str">'/task/{id}'</span>, [TaskController::<span class="class">class</span>, <span class="str">'destroy'</span>])-><span class="func">name</span>(<span class="str">'task.destroy'</span>);
-Route::<span class="func">patch</span>(<span class="str">'/task/{id}/toggle'</span>, [TaskController::<span class="class">class</span>, <span class="str">'toggle'</span>])-><span class="func">name</span>(<span class="str">'task.toggle'</span>);</code></pre>
+                        <pre class="!border-0"><code class="language-php"><span class="c">// Linha ~83</span>
+<span class="k">'timezone'</span> => <span class="s">'America/Sao_Paulo'</span>,
+<span class="k">'locale'</span> => <span class="s">'pt_BR'</span>,</code></pre>
                     </div>
                 </div>
-
                 <div class="flex justify-between pt-6">
                     <button onclick="showStep('step-intro')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-blade')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Blade Views <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-
-            <div id="step-blade" class="step-content space-y-8">
-                <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Views com Blade</h2>
-                    <p class="text-muted mt-2">Blade é o motor de template do Laravel. Ele permite usar PHP dentro do HTML de forma limpa.</p>
-                </div>
-
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">resources/views/layout.blade.php</h3>
-                    <p class="text-xs text-muted">Crie este arquivo para ser a "casca" do site.</p>
-                    <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;Laravel Tasks&lt;/title&gt;
-    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body class="bg-slate-900 text-white p-10"&gt;
-    &lt;div class="max-w-2xl mx-auto"&gt;
-        @yield('content')
-    &lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-                    </div>
-
-                    <h3 class="text-white font-bold text-sm mt-4">resources/views/index.blade.php</h3>
-                    <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-html">@extends('layout')
-
-@section('content')
-    &lt;h1 class="text-3xl font-bold mb-6"&gt;Minhas Tarefas&lt;/h1&gt;
-    
-    &lt;!-- Formulário virá aqui --&gt;
-    
-    &lt;div class="mt-6"&gt;
-        @foreach($tasks as $task)
-            &lt;div class="bg-slate-800 p-4 mb-2 rounded flex justify-between"&gt;
-                {{ $task->name }}
-            &lt;/div&gt;
-        @endforeach
-    &lt;/div&gt;
-@endsection</code></pre>
-                    </div>
-                </div>
-
-                <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-controller')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-mysql')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: MySQL <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-
-            <div id="step-mysql" class="step-content space-y-8">
-                <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Conectando o Banco</h2>
-                    <p class="text-muted mt-2">Configurando para rodar com XAMPP.</p>
-                </div>
-
-                <div class="bg-card p-6 rounded-xl border border-border">
-                    <div class="flex items-center gap-4 mb-4">
-                        <i data-lucide="settings" class="text-accent w-8 h-8"></i>
-                        <div>
-                            <h3 class="font-bold text-white">Arquivo .env</h3>
-                            <p class="text-sm text-muted">Este arquivo fica na raiz do projeto. Ele guarda as senhas.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-black/30 p-4 rounded border border-border font-mono text-sm">
-                        <span class="text-gray-500">DB_CONNECTION=</span>mysql<br>
-                        <span class="text-gray-500">DB_HOST=</span>127.0.0.1<br>
-                        <span class="text-gray-500">DB_PORT=</span>3306<br>
-                        <span class="text-gray-500">DB_DATABASE=</span><span class="text-accent">laravel_tasks</span><br>
-                        <span class="text-gray-500">DB_USERNAME=</span>root<br>
-                        <span class="text-gray-500">DB_PASSWORD=</span><span class="text-gray-600">(vazio no xampp)</span>
-                    </div>
-                    
-                    <div class="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm rounded flex items-center gap-2">
-                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                        Lembre-se de criar o banco "laravel_tasks" no phpMyAdmin antes!
-                    </div>
-                </div>
-
-                <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-blade')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-migration')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Migrations <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-migration')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Model <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
             <div id="step-migration" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Migrations</h2>
-                    <p class="text-muted mt-2">Migrations são como "controle de versão" para seu banco de dados.</p>
+                    <h2 class="text-3xl font-bold text-white">2. Migration e Model</h2>
+                    <p class="text-muted mt-2">Adicionando o campo <code>description</code> que faltava.</p>
                 </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">1. Criar o arquivo de Migration</h3>
+                <div class="space-y-6">
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-bash">php artisan make:migration create_tasks_table</code></pre>
+                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal</div>
+                        <pre class="!border-0"><code class="language-bash">php artisan make:model Task -m</code></pre>
                     </div>
 
-                    <h3 class="text-white font-bold text-sm mt-4">2. Definir os Campos (database/migrations/xxxx_create_tasks_table.php)</h3>
+                    <h3 class="text-white font-bold text-sm">A. Migration (database/migrations/xxxx_create_tasks_table.php)</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-php"><span class="keyword">public function</span> <span class="func">up</span>(): <span class="keyword">void</span>
+                        <pre class="!border-0"><code class="language-php"><span class="k">public function</span> <span class="f">up</span>(): <span class="k">void</span>
 {
-    Schema::<span class="func">create</span>(<span class="str">'tasks'</span>, <span class="keyword">function</span> (Blueprint <span class="var">$table</span>) {
-        <span class="var">$table</span>-><span class="func">id</span>();
-        <span class="var">$table</span>-><span class="func">string</span>(<span class="str">'name'</span>);
-        <span class="var">$table</span>-><span class="func">text</span>(<span class="str">'description'</span>)-><span class="func">nullable</span>();
-        <span class="var">$table</span>-><span class="func">string</span>(<span class="str">'category'</span>);
-        <span class="var">$table</span>-><span class="func">boolean</span>(<span class="str">'status'</span>)-><span class="func">default</span>(<span class="keyword">false</span>);
-        <span class="var">$table</span>-><span class="func">timestamps</span>();
+    Schema::<span class="f">create</span>(<span class="s">'tasks'</span>, <span class="k">function</span> (Blueprint <span class="v">$table</span>) {
+        <span class="v">$table</span>-><span class="f">id</span>();
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'name'</span>);
+        <span class="v">$table</span>-><span class="f">text</span>(<span class="s">'description'</span>)-><span class="f">nullable</span>(); <span class="c">// CAMPO NOVO AQUI</span>
+        <span class="v">$table</span>-><span class="f">string</span>(<span class="s">'category'</span>);
+        <span class="v">$table</span>-><span class="f">boolean</span>(<span class="s">'status'</span>)-><span class="f">default</span>(<span class="k">false</span>);
+        <span class="v">$table</span>-><span class="f">timestamps</span>();
     });
 }</code></pre>
                     </div>
 
-                    <h3 class="text-white font-bold text-sm mt-4">3. Rodar a Migration</h3>
+                    <h3 class="text-white font-bold text-sm flex items-center gap-2">B. O Model (app/Models/Task.php)</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <pre class="!border-0"><code class="language-php"><span class="php-tag">&lt;?php</span>
+
+<span class="k">namespace</span> App\Models;
+
+<span class="k">use</span> Illuminate\Database\Eloquent\Factories\HasFactory;
+<span class="k">use</span> Illuminate\Database\Eloquent\Model;
+
+<span class="k">class</span> <span class="class">Task</span> <span class="k">extends</span> Model
+{
+    <span class="k">use</span> HasFactory;
+
+    <span class="k">protected</span> <span class="v">$fillable</span> = [
+        <span class="s">'name'</span>, 
+        <span class="s">'description'</span>, <span class="c">// Adicionado ao fillable</span>
+        <span class="s">'category'</span>, 
+        <span class="s">'status'</span>
+    ];
+}</code></pre>
+                    </div>
+
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal</div>
                         <pre class="!border-0"><code class="language-bash">php artisan migrate</code></pre>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-mysql')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-seeder')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Seeder <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-config')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-seeds')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Seeds (20 Reg) <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <div id="step-seeder" class="step-content space-y-8">
+            <div id="step-seeds" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Seeds</h2>
-                    <p class="text-muted mt-2">Povoar o banco com dados falsos para teste.</p>
+                    <h2 class="text-3xl font-bold text-white">3. Seeds (Gerar 20 Tarefas)</h2>
+                    <p class="text-muted mt-2">Vamos criar um loop para popular o banco e testar a paginação.</p>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
                         <pre class="!border-0"><code class="language-bash">php artisan make:seeder TaskSeeder</code></pre>
                     </div>
 
+                    <h3 class="text-white font-bold text-sm">database/seeders/TaskSeeder.php</h3>
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <div class="px-4 py-2 border-b border-border bg-base/50 text-xs text-muted font-mono">database/seeders/TaskSeeder.php</div>
-                        <pre class="!border-0"><code class="language-php"><span class="keyword">use</span> Illuminate\Support\Facades\DB;
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar</button>
+                        <pre class="!border-0"><code class="language-php"><span class="k">use</span> Illuminate\Support\Facades\DB;
 
-<span class="keyword">public function</span> <span class="func">run</span>(): <span class="keyword">void</span>
+<span class="k">public function</span> <span class="f">run</span>(): <span class="k">void</span>
 {
-    DB::<span class="func">table</span>(<span class="str">'tasks'</span>)-><span class="func">insert</span>([
-        [
-            <span class="str">'name'</span> => <span class="str">'Aprender Laravel'</span>,
-            <span class="str">'description'</span> => <span class="str">'Estudar rotas e controllers'</span>,
-            <span class="str">'category'</span> => <span class="str">'Estudo'</span>,
-            <span class="str">'status'</span> => <span class="keyword">false</span>,
-        ],
-        [
-            <span class="str">'name'</span> => <span class="str">'Comprar Café'</span>,
-            <span class="str">'description'</span> => <span class="str">'Essencial para programar'</span>,
-            <span class="str">'category'</span> => <span class="str">'Pessoal'</span>,
-            <span class="str">'status'</span> => <span class="keyword">true</span>,
-        ]
-    ]);
+    <span class="c">// Criar 20 registros para testar paginação</span>
+    <span class="k">for</span> (<span class="v">$i</span> = 1; <span class="v">$i</span> <= 20; <span class="v">$i</span>++) {
+        DB::<span class="f">table</span>(<span class="s">'tasks'</span>)-><span class="f">insert</span>([
+            <span class="s">'name'</span> => <span class="s">"Tarefa Importante $i"</span>,
+            <span class="s">'description'</span> => <span class="s">"Descrição detalhada sobre a tarefa $i para testar o layout."</span>,
+            <span class="s">'category'</span> => <span class="v">$i</span> % 2 == 0 ? <span class="s">'Trabalho'</span> : <span class="s">'Estudo'</span>,
+            <span class="s">'status'</span> => <span class="k">false</span>,
+            <span class="s">'created_at'</span> => <span class="f">now</span>(),
+            <span class="s">'updated_at'</span> => <span class="f">now</span>(),
+        ]);
+    }
 }</code></pre>
                     </div>
 
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <div class="px-4 py-2 bg-base/50 border-b border-border text-xs text-muted font-mono">Terminal (Executar)</div>
                         <pre class="!border-0"><code class="language-bash">php artisan db:seed --class=TaskSeeder</code></pre>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
                     <button onclick="showStep('step-migration')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-crud')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: CRUD <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-controller')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Controller <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <div id="step-crud" class="step-content space-y-8">
+            <div id="step-controller" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">CRUD com Upsert</h2>
-                    <p class="text-muted mt-2">Vamos usar <code>updateOrCreate</code> para fazer Criar e Editar na mesma lógica.</p>
+                    <h2 class="text-3xl font-bold text-white">4. Controller (Lógica)</h2>
                 </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">App/Http/Controllers/TaskController.php</h3>
+                <div class="space-y-6">
                     <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <button onclick="copyToClipboard(this)" class="absolute top-2 right-2 text-xs text-muted hover:text-white">Copiar</button>
-                        <pre class="!border-0"><code class="language-php"><span class="keyword">use</span> App\Models\Task; <span class="comment">// Crie o model: php artisan make:model Task</span>
-<span class="keyword">use</span> Illuminate\Http\Request;
+                        <pre class="!border-0"><code class="language-bash">php artisan make:controller TaskController</code></pre>
+                    </div>
 
-<span class="keyword">class</span> <span class="class">TaskController</span> <span class="keyword">extends</span> Controller
+                    <h3 class="text-white font-bold text-sm">app/Http/Controllers/TaskController.php</h3>
+                    <div class="bg-card rounded-lg border border-border overflow-hidden">
+                        <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                        <pre class="!border-0"><code class="language-php"><span class="k">namespace</span> App\Http\Controllers;
+
+<span class="k">use</span> App\Models\Task;
+<span class="k">use</span> Illuminate\Http\Request;
+
+<span class="k">class</span> <span class="class">TaskController</span> <span class="k">extends</span> Controller
 {
-    <span class="keyword">public function</span> <span class="func">index</span>() {
-        <span class="var">$tasks</span> = Task::<span class="func">orderBy</span>(<span class="str">'id'</span>, <span class="str">'desc'</span>)-><span class="func">get</span>();
-        <span class="keyword">return</span> <span class="func">view</span>(<span class="str">'index'</span>, [<span class="str">'tasks'</span> => <span class="var">$tasks</span>]);
+    <span class="k">public function</span> <span class="f">index</span>(Request <span class="v">$request</span>) {
+        <span class="v">$query</span> = Task::<span class="f">query</span>();
+
+        <span class="k">if</span> (<span class="v">$request</span>-><span class="f">has</span>(<span class="s">'search'</span>)) {
+            <span class="v">$query</span>-><span class="f">where</span>(<span class="s">'name'</span>, <span class="s">'like'</span>, <span class="s">'%'</span> . <span class="v">$request</span>->search . <span class="s">'%'</span>);
+        }
+
+        <span class="c">// Paginação com 5 itens por página</span>
+        <span class="v">$tasks</span> = <span class="v">$query</span>-><span class="f">orderBy</span>(<span class="s">'id'</span>, <span class="s">'desc'</span>)-><span class="f">paginate</span>(5);
+        
+        <span class="k">return</span> <span class="f">view</span>(<span class="s">'index'</span>, [<span class="s">'tasks'</span> => <span class="v">$tasks</span>]);
     }
 
-    <span class="keyword">public function</span> <span class="func">store</span>(Request <span class="var">$request</span>) {
-        <span class="comment">// Validação básica</span>
-        <span class="var">$request</span>-><span class="func">validate</span>([
-            <span class="str">'name'</span> => <span class="str">'required|max:255'</span>,
-            <span class="str">'category'</span> => <span class="str">'required'</span>
+    <span class="k">public function</span> <span class="f">store</span>(Request <span class="v">$request</span>) {
+        <span class="v">$request</span>-><span class="f">validate</span>([
+            <span class="s">'name'</span> => <span class="s">'required|max:255'</span>,
+            <span class="s">'description'</span> => <span class="s">'required'</span>, <span class="c">// Validação da descrição</span>
+            <span class="s">'category'</span> => <span class="s">'required'</span>
         ]);
 
-        <span class="comment">// UPSERT: Se tiver ID, atualiza. Se não, cria.</span>
-        Task::<span class="func">updateOrCreate</span>(
-            [<span class="str">'id'</span> => <span class="var">$request</span>-><span class="func">input</span>(<span class="str">'id'</span>)], 
+        <span class="c">// Upsert (Cria ou Atualiza)</span>
+        Task::<span class="f">updateOrCreate</span>(
+            [<span class="s">'id'</span> => <span class="v">$request</span>-><span class="f">input</span>(<span class="s">'id'</span>)],
             [
-                <span class="str">'name'</span> => <span class="var">$request</span>-><span class="func">input</span>(<span class="str">'name'</span>),
-                <span class="str">'description'</span> => <span class="var">$request</span>-><span class="func">input</span>(<span class="str">'description'</span>),
-                <span class="str">'category'</span> => <span class="var">$request</span>-><span class="func">input</span>(<span class="str">'category'</span>)
+                <span class="s">'name'</span> => <span class="v">$request</span>-><span class="f">input</span>(<span class="s">'name'</span>),
+                <span class="s">'description'</span> => <span class="v">$request</span>-><span class="f">input</span>(<span class="s">'description'</span>),
+                <span class="s">'category'</span> => <span class="v">$request</span>-><span class="f">input</span>(<span class="s">'category'</span>)
             ]
         );
 
-        <span class="keyword">return</span> <span class="func">redirect</span>()-><span class="func">route</span>(<span class="str">'home'</span>);
+        <span class="k">return</span> <span class="f">redirect</span>()-><span class="f">route</span>(<span class="s">'home'</span>);
     }
 
-    <span class="keyword">public function</span> <span class="func">destroy</span>(<span class="var">$id</span>) {
-        Task::<span class="func">destroy</span>(<span class="var">$id</span>);
-        <span class="keyword">return</span> <span class="func">redirect</span>()-><span class="func">route</span>(<span class="str">'home'</span>);
+    <span class="k">public function</span> <span class="f">destroy</span>(<span class="v">$id</span>) {
+        Task::<span class="f">destroy</span>(<span class="v">$id</span>);
+        <span class="k">return</span> <span class="f">back</span>();
+    }
+
+    <span class="k">public function</span> <span class="f">toggle</span>(<span class="v">$id</span>) {
+        <span class="v">$task</span> = Task::<span class="f">find</span>(<span class="v">$id</span>);
+        <span class="v">$task</span>->status = !<span class="v">$task</span>->status;
+        <span class="v">$task</span>-><span class="f">save</span>();
+        <span class="k">return</span> <span class="f">back</span>();
     }
 }</code></pre>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-seeder')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-features')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Busca & Toggle <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-seeds')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-routes')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Rotas <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <div id="step-features" class="step-content space-y-8">
+            <div id="step-routes" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Busca e Status</h2>
-                    <p class="text-muted mt-2">Adicionando interatividade: pesquisar e marcar como feito.</p>
+                    <h2 class="text-3xl font-bold text-white">5. Rotas (routes/web.php)</h2>
                 </div>
+                <div class="bg-card rounded-lg border border-border overflow-hidden">
+                    <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                    <pre class="!border-0"><code class="language-php"><span class="php-tag">&lt;?php</span>
 
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">1. Atualizando o Controller (Busca e Toggle)</h3>
-                    <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-php"><span class="comment">// No método index()</span>
-<span class="keyword">public function</span> <span class="func">index</span>(Request <span class="var">$request</span>) {
-    <span class="var">$query</span> = Task::<span class="func">query</span>();
+<span class="k">use</span> Illuminate\Support\Facades\Route;
+<span class="k">use</span> App\Http\Controllers\TaskController;
 
-    <span class="keyword">if</span> (<span class="var">$request</span>-><span class="func">has</span>(<span class="str">'search'</span>)) {
-        <span class="var">$query</span>-><span class="func">where</span>(<span class="str">'name'</span>, <span class="str">'like'</span>, <span class="str">'%'</span> . <span class="var">$request</span>->search . <span class="str">'%'</span>);
-    }
-
-    <span class="var">$tasks</span> = <span class="var">$query</span>-><span class="func">orderBy</span>(<span class="str">'id'</span>, <span class="str">'desc'</span>)-><span class="func">get</span>(); <span class="comment">// Vamos mudar isso em breve para paginate</span>
-    <span class="keyword">return</span> <span class="func">view</span>(<span class="str">'index'</span>, [<span class="str">'tasks'</span> => <span class="var">$tasks</span>]);
-}
-
-<span class="comment">// Novo método toggle</span>
-<span class="keyword">public function</span> <span class="func">toggle</span>(<span class="var">$id</span>) {
-    <span class="var">$task</span> = Task::<span class="func">find</span>(<span class="var">$id</span>);
-    <span class="var">$task</span>->status = !<span class="var">$task</span>->status; <span class="comment">// Inverte</span>
-    <span class="var">$task</span>-><span class="func">save</span>();
-    <span class="keyword">return</span> <span class="func">back</span>();
-}</code></pre>
-                    </div>
+Route::<span class="f">get</span>(<span class="s">'/'</span>, [TaskController::<span class="class">class</span>, <span class="s">'index'</span>])-><span class="f">name</span>(<span class="s">'home'</span>);
+Route::<span class="f">post</span>(<span class="s">'/task'</span>, [TaskController::<span class="class">class</span>, <span class="s">'store'</span>])-><span class="f">name</span>(<span class="s">'task.store'</span>);
+Route::<span class="f">delete</span>(<span class="s">'/task/{id}'</span>, [TaskController::<span class="class">class</span>, <span class="s">'destroy'</span>])-><span class="f">name</span>(<span class="s">'task.destroy'</span>);
+Route::<span class="f">patch</span>(<span class="s">'/task/{id}/toggle'</span>, [TaskController::<span class="class">class</span>, <span class="s">'toggle'</span>])-><span class="f">name</span>(<span class="s">'task.toggle'</span>);</code></pre>
                 </div>
-
                 <div class="flex justify-between pt-6">
-                    <button onclick="showStep('step-crud')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-pagination')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Paginação <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-controller')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-layout')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Views <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <div id="step-pagination" class="step-content space-y-8">
+            <div id="step-layout" class="step-content space-y-8">
                 <div class="border-b border-border pb-6">
-                    <h2 class="text-3xl font-bold text-white">Paginação</h2>
-                    <p class="text-muted mt-2">Laravel torna paginação incrivelmente fácil. Basta trocar <code>get()</code> por <code>paginate()</code>.</p>
+                    <h2 class="text-3xl font-bold text-white">6. View Layout</h2>
+                    <p class="text-muted mt-2">Crie o arquivo <code>resources/views/layout.blade.php</code>.</p>
                 </div>
-
-                <div class="space-y-4">
-                    <h3 class="text-white font-bold text-sm">1. No Controller</h3>
-                    <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-php"><span class="comment">// Em vez de ->get(), use:</span>
-<span class="var">$tasks</span> = <span class="var">$query</span>-><span class="func">orderBy</span>(<span class="str">'id'</span>, <span class="str">'desc'</span>)-><span class="func">paginate</span>(5);</code></pre>
-                    </div>
-
-                    <h3 class="text-white font-bold text-sm mt-4">2. Na View (index.blade.php)</h3>
-                    <p class="text-xs text-muted">Adicione isso abaixo do foreach.</p>
-                    <div class="bg-card rounded-lg border border-border overflow-hidden">
-                        <pre class="!border-0"><code class="language-html">&lt;div class="mt-4"&gt;
-    {{ $tasks-&gt;links() }}
-&lt;/div&gt;</code></pre>
-                    </div>
-                    
-                    <div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg flex items-start gap-3 mt-4">
-                        <i data-lucide="check-circle" class="text-emerald-400 w-5 h-5 mt-0.5"></i>
-                        <div>
-                            <h4 class="text-emerald-400 font-bold text-sm">Módulo 2 Concluído!</h4>
-                            <p class="text-sm text-muted">Você construiu um CRUD completo com busca, paginação e banco de dados real. No próximo módulo, focaremos em Autenticação (Login) e API.</p>
-                        </div>
-                    </div>
+                <div class="bg-card rounded-lg border border-border overflow-hidden">
+                    <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                    <pre class="!border-0"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Laravel Tasks&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-900 text-slate-200 font-sans"&gt;
+    &lt;div class="min-h-screen flex flex-col items-center py-10 px-4"&gt;
+        &lt;div class="w-full max-w-2xl"&gt;
+            @yield('content')
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
                 </div>
+                <div class="flex justify-between pt-6">
+                    <button onclick="showStep('step-routes')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <button onclick="showStep('step-view')" class="bg-card border border-border hover:border-accent hover:text-accent text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">Próximo: Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
 
+            <div id="step-view" class="step-content space-y-8">
+                <div class="border-b border-border pb-6">
+                    <h2 class="text-3xl font-bold text-white">7. View Dashboard</h2>
+                    <p class="text-muted mt-2">Crie o arquivo <code>resources/views/index.blade.php</code>.</p>
+                </div>
+                <div class="bg-card rounded-lg border border-border overflow-hidden">
+                    <button onclick="copyToClipboard(this)" class="absolute right-4 mt-2 text-xs text-muted hover:text-white">Copiar Código</button>
+                    <pre class="!border-0"><code class="language-html">@extends('layout')
+
+@section('content')
+    &lt;h1 class="text-3xl font-bold text-white mb-8 flex items-center gap-2"&gt;
+        🚀 Gerenciador de Tarefas
+    &lt;/h1&gt;
+
+    &lt;!-- FORMULÁRIO DE CADASTRO --&gt;
+    &lt;div class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-8 shadow-xl"&gt;
+        &lt;form action="{{ route('task.store') }}" method="POST" class="flex flex-col gap-4"&gt;
+            @csrf
+            
+            &lt;div class="flex gap-4"&gt;
+                &lt;input type="text" name="name" placeholder="Título da tarefa..." required
+                       class="flex-1 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 placeholder-slate-500"&gt;
+                
+                &lt;select name="category" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white focus:outline-none focus:border-red-500"&gt;
+                    &lt;option value="Trabalho"&gt;💼 Trabalho&lt;/option&gt;
+                    &lt;option value="Pessoal"&gt;🏠 Pessoal&lt;/option&gt;
+                    &lt;option value="Estudo"&gt;📚 Estudo&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Campo Descrição (Adicionado) --&gt;
+            &lt;input type="text" name="description" placeholder="Detalhes (Opcional)"
+                   class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 placeholder-slate-500"&gt;
+
+            &lt;button class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition w-full md:w-auto"&gt;
+                Adicionar Tarefa
+            &lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+
+    &lt;!-- FILTRO DE BUSCA --&gt;
+    &lt;form method="GET" class="mb-6"&gt;
+        &lt;input type="text" name="search" placeholder="🔍 Pesquisar por título..." value="{{ request()->search }}"
+               class="w-full bg-transparent border-b border-slate-700 p-2 text-slate-300 focus:outline-none focus:border-red-500 transition"&gt;
+    &lt;/form&gt;
+
+    &lt;!-- LISTA DE TAREFAS --&gt;
+    &lt;div class="space-y-3"&gt;
+        @foreach($tasks as $task)
+        &lt;div class="flex items-start justify-between p-4 bg-slate-800 rounded-lg border border-slate-700 hover:border-slate-600 transition group"&gt;
+            
+            &lt;div class="flex items-start gap-4"&gt;
+                &lt;!-- Checkbox (Toggle) --&gt;
+                &lt;form action="{{ route('task.toggle', $task->id) }}" method="POST"&gt;
+                    @csrf @method('PATCH')
+                    &lt;button class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition mt-1
+                                   {{ $task->status ? 'bg-emerald-500 border-emerald-500' : 'border-slate-500 hover:border-white' }}"&gt;
+                        @if($task->status) 
+                            &lt;svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+                        @endif
+                    &lt;/button&gt;
+                &lt;/form&gt;
+
+                &lt;div&gt;
+                    &lt;p class="font-medium {{ $task->status ? 'line-through text-slate-500' : 'text-white' }}"&gt;
+                        {{ $task->name }}
+                    &lt;/p&gt;
+                    &lt;p class="text-sm text-slate-400 mb-1"&gt;{{ $task->description }}&lt;/p&gt;
+                    &lt;span class="text-[10px] px-2 py-0.5 rounded bg-slate-700 text-slate-400 uppercase tracking-wide"&gt;
+                        {{ $task->category }}
+                    &lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Botão Excluir --&gt;
+            &lt;form action="{{ route('task.destroy', $task->id) }}" method="POST" onsubmit="return confirm('Tem certeza?')"&gt;
+                @csrf @method('DELETE')
+                &lt;button class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-2" title="Excluir"&gt;
+                    &lt;svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"&gt;&lt;/path&gt;&lt;/svg&gt;
+                &lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+        @endforeach
+
+        @if($tasks->isEmpty())
+            &lt;div class="text-center py-10 text-slate-500"&gt;
+                &lt;p&gt;Nenhuma tarefa encontrada...&lt;/p&gt;
+            &lt;/div&gt;
+        @endif
+    &lt;/div&gt;
+
+    &lt;!-- PAGINAÇÃO --&gt;
+    &lt;div class="mt-6"&gt;
+        {{ $tasks->links() }} 
+        &lt;!-- Rode: php artisan vendor:publish --tag=laravel-pagination para estilizar --&gt;
+    &lt;/div&gt;
+@endsection</code></pre>
+                </div>
                 <div class="flex justify-between pt-6 pb-20">
-                    <button onclick="showStep('step-features')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
-                    <button onclick="showStep('step-intro')" class="bg-accent hover:bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-accent/20">Reiniciar Módulo <i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+                    <button onclick="showStep('step-layout')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    
                 </div>
             </div>
-
+                <div class="text-emerald-400 font-bold flex items-center gap-2 animate-pulse">
+                        <i data-lucide="check-circle"></i> Tudo pronto! Rode: 
+                        <span class="bg-green-500 px-5 py-3 rounded-full text-white">php artisan serve</span>
+                </div>
         </div>
     </main>
 
