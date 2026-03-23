@@ -144,6 +144,181 @@
     .prose-modal strong {
       color: #ffffff;
     }
+    .info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .info-feature-card {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 1rem 1.1rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(2, 6, 23, 0.18);
+    }
+    .info-feature-card p {
+      margin-top: 0;
+    }
+    .info-feature-card + .info-feature-card p {
+      margin-top: 0;
+    }
+    .info-feature-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.55rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .info-feature-card.backend {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .info-feature-card.frontend {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.16), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .info-feature-card.fullstack {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
+    .info-feature-card.pratica {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-grid {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 0.25rem;
+    }
+    .lesson-mini-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      padding: 0.95rem 1rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 24px rgba(2, 6, 23, 0.16);
+    }
+    .lesson-mini-title {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 0.45rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .lesson-mini-card.perfil {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.produto {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.admin {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
+    .lesson-mini-card.rota {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.funcao {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.base {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-card.python-flow {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.template-flow {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.folder-flow {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
+    .lesson-mini-card.cdn-link {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(14, 165, 233, 0.08));
+      border-color: rgba(34, 211, 238, 0.24);
+    }
+    .lesson-mini-card.cdn-tree {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(59, 130, 246, 0.08));
+      border-color: rgba(99, 102, 241, 0.24);
+    }
+    .lesson-mini-card.get-method {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.post-method {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.put-method {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-card.delete-method {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(220, 38, 38, 0.08));
+      border-color: rgba(239, 68, 68, 0.24);
+    }
+    .lesson-mini-card.json-keys {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.json-structure {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.json-growth {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-card.data-source {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.api-growth {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.crud-base {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
+    .lesson-mini-card.summary-python {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.summary-flask {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.summary-base {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-card.summary-next {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
+    .lesson-mini-card.roadmap-crud {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: rgba(16, 185, 129, 0.24);
+    }
+    .lesson-mini-card.roadmap-db {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+      border-color: rgba(59, 130, 246, 0.24);
+    }
+    .lesson-mini-card.roadmap-git {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.08));
+      border-color: rgba(245, 158, 11, 0.24);
+    }
+    .lesson-mini-card.roadmap-deploy {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(217, 70, 239, 0.08));
+      border-color: rgba(168, 85, 247, 0.24);
+    }
     .command-header {
       display: flex;
       align-items: center;
@@ -421,7 +596,16 @@
                   <pre><code>c:\dev\flask\meu-projeto-flask\
 └── app.py</code></pre>
                 </div>
-                <p class="mt-4 text-sm text-muted leading-7">Essa estrutura mínima já dá sentido ao fluxo: abrir a pasta no editor, criar o arquivo principal, seguir para o setup e depois rodar o servidor dentro do mesmo diretório.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7 mt-4">
+                  <div class="lesson-mini-card rota">
+                    <div class="lesson-mini-title"><span>📁</span><span>Pasta enxuta e clara</span></div>
+                    <p>Começar só com a pasta do projeto e o <code>app.py</code> ajuda o aluno a entender a base sem distração.</p>
+                  </div>
+                  <div class="lesson-mini-card base">
+                    <div class="lesson-mini-title"><span>🚀</span><span>Primeiro passo real</span></div>
+                    <p>Mesmo simples, esse formato já prepara o terreno para crescer com <code>venv</code>, <code>templates/</code>, <code>static/</code> e novas rotas.</p>
+                  </div>
+                </div>
               </div>
 
               <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Arquivo app.py do primeiro app Flask">
@@ -448,7 +632,7 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             </div>
 
             <div>
-              <button type="button" class="learn-more-btn" data-info-title="Crie aplicações" data-info-content="<p><strong>⚙️ Projetos backend API</strong><br>Use Flask para criar APIs que retornam JSON, conectam banco de dados, tratam autenticação e atendem apps web ou mobile.</p><p><strong>🖥️ Projetos frontend com rotas</strong><br>Você também pode renderizar páginas HTML com <code>render_template</code>, montar telas com navegação por rotas e trabalhar o lado visual dentro do próprio projeto.</p><p><strong>🔗 Projetos full stack</strong><br>Flask permite unir backend e frontend no mesmo projeto, organizando rotas, templates, formulários, banco e regras de negócio em uma aplicação só.</p><p><strong>🚀 O que isso significa na prática</strong><br>Com a mesma base que começa em <code>app.py</code>, você pode evoluir para sistemas administrativos, APIs, dashboards, áreas logadas e projetos completos do início ao fim.</p>" onclick="openInfoModal(this)"><span class='emoji-bounce'>🧭</span><span>Saiba mais</span></button>
+              <button type="button" class="learn-more-btn" data-info-title="Crie aplicações" data-info-content="<div class='info-grid'><div class='info-feature-card backend'><div class='info-feature-title'><span>⚙️</span><span>Projetos backend API</span></div><p>Use Flask para criar APIs que retornam JSON, conectam banco de dados, tratam autenticação e atendem apps web ou mobile.</p></div><div class='info-feature-card frontend'><div class='info-feature-title'><span>🖥️</span><span>Projetos frontend com rotas</span></div><p>Você também pode renderizar páginas HTML com <code>render_template</code>, montar telas com navegação por rotas e trabalhar o lado visual dentro do próprio projeto.</p></div><div class='info-feature-card fullstack'><div class='info-feature-title'><span>🔗</span><span>Projetos full stack</span></div><p>Flask permite unir backend e frontend no mesmo projeto, organizando rotas, templates, formulários, banco e regras de negócio em uma aplicação só.</p></div><div class='info-feature-card pratica'><div class='info-feature-title'><span>🚀</span><span>O que isso significa na prática</span></div><p>Com a mesma base que começa em <code>app.py</code>, você pode evoluir para sistemas administrativos, APIs, dashboards, áreas logadas e projetos completos do início ao fim.</p></div></div>" onclick="openInfoModal(this)"><span class='emoji-bounce'>🧭</span><span>Saiba mais</span></button>
             </div>
 
             <div class="flex justify-between pt-4">
@@ -521,6 +705,12 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
                 <pre><code>flask --app app run --debug</code></pre>
                 <button type="button" onclick="copyInlineCommand('flask --app app run --debug', this)" class="code-action-btn w-full justify-center"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
               </div>
+              <div class="command-step">
+                <span class="command-badge">🌍 Passo 6</span>
+                <div><h3 class="text-lg font-semibold text-white">Testar no navegador</h3><p class="mt-2 text-sm text-muted leading-7">Depois de subir o servidor, abra o endereço local para confirmar se o projeto respondeu corretamente.</p></div>
+                <pre><code>http://127.0.0.1:5000</code></pre>
+                <button type="button" onclick="copyInlineCommand('http://127.0.0.1:5000', this)" class="code-action-btn w-full justify-center"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+              </div>
             </div>
 
             <div class="flex justify-between pt-4">
@@ -542,23 +732,50 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Leitura da rota inicial</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p>O endereço <code>/</code> representa a página inicial da aplicação.</p>
-                  <p>A função <code>home()</code> é executada sempre que essa URL é acessada.</p>
-                  <p>Mesmo sendo simples, esse padrão já ensina a base de quase tudo no Flask.</p>
-                </div>
-              </div>
-              <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Rota básica Flask">
-                <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
-                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">O início</p><h3 class="mt-1 text-lg font-semibold text-white">Hello World</h3></div>
-                  <div class="flex items-center gap-2">
-                    <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
-                    <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted leading-7">
+                  <div class="lesson-mini-card rota">
+                    <div class="lesson-mini-title"><span>🏠</span><span>Endereço inicial</span></div>
+                    <p>O endereço <code>/</code> representa a página inicial da aplicação. É o ponto mais comum para começar um projeto web.</p>
+                  </div>
+                  <div class="lesson-mini-card funcao">
+                    <div class="lesson-mini-title"><span>⚙️</span><span>Função executada</span></div>
+                    <p>A função <code>home()</code> é executada sempre que essa URL é acessada, ligando a rota ao comportamento em Python.</p>
+                  </div>
+                  <div class="lesson-mini-card base">
+                    <div class="lesson-mini-title"><span>🚀</span><span>Base do Flask</span></div>
+                    <p>Mesmo sendo simples, esse padrão já ensina a base de quase tudo no Flask: rota, função, resposta e fluxo de navegação.</p>
+                  </div>
+                  <div class="lesson-mini-card produto">
+                    <div class="lesson-mini-title"><span>🧱</span><span>Bloco reutilizável</span></div>
+                    <p>Depois da primeira rota, você pode repetir essa mesma lógica para criar páginas como produto, contato, painel ou dashboard.</p>
                   </div>
                 </div>
-                <div class="p-5"><pre><code>@app.route(<span class="py-str">"/"</span>)
+              </div>
+              <div class="space-y-6">
+                <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Rota básica Flask">
+                  <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                    <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">O início</p><h3 class="mt-1 text-lg font-semibold text-white">Hello World</h3></div>
+                    <div class="flex items-center gap-2">
+                      <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                      <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                    </div>
+                  </div>
+                  <div class="p-5"><pre><code>@app.route(<span class="py-str">"/"</span>)
 <span class="py-key">def</span> <span class="py-fn">home</span>():
     <span class="py-key">return</span> <span class="py-str">"Hello World"</span></code></pre></div>
+                </div>
+                <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Rota simples de produto em Flask">
+                  <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                    <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Exemplo extra</p><h3 class="mt-1 text-lg font-semibold text-white">Página de produto</h3></div>
+                    <div class="flex items-center gap-2">
+                      <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                      <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                    </div>
+                  </div>
+                  <div class="p-5"><pre><code>@app.route(<span class="py-str">"/produto"</span>)
+<span class="py-key">def</span> <span class="py-fn">produto</span>():
+    <span class="py-key">return</span> <span class="py-str">"Página de produto"</span></code></pre></div>
+                </div>
               </div>
             </div>
             <div>
@@ -579,15 +796,24 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Onde isso aparece na prática</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p>Páginas de perfil, como <code>/usuario/ana</code>.</p>
-                  <p>Detalhes de produtos, como <code>/produto/15</code>.</p>
-                  <p>Recursos administrativos por identificador ou slug.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card perfil">
+                    <div class="lesson-mini-title"><span>👤</span><span>Páginas de perfil</span></div>
+                    <p>Um exemplo clássico é a rota <code>/usuario/ana</code>, em que o nome vem direto da URL.</p>
+                  </div>
+                  <div class="lesson-mini-card produto">
+                    <div class="lesson-mini-title"><span>🛍️</span><span>Detalhes de produtos</span></div>
+                    <p>Você pode usar algo como <code>/produto/15</code> para carregar o item certo com base no identificador.</p>
+                  </div>
+                  <div class="lesson-mini-card admin">
+                    <div class="lesson-mini-title"><span>🧩</span><span>Recursos administrativos</span></div>
+                    <p>Também funciona muito bem para painéis internos, edição por ID, slugs e áreas de gerenciamento.</p>
+                  </div>
                 </div>
               </div>
               <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Rotas dinâmicas Flask">
                 <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
-                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">URLs dinâmicas</p><h3 class="mt-1 text-lg font-semibold text-white">Parâmetros na rota</h3></div>
+                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">URLs dinâmicas</p><h3 class="mt-1 text-lg font-semibold text-white">Parâmetros na rota</h3><p class="mt-2 text-xs text-muted">Exemplo prático em <code>c:\dev\flask\flask-exemplo</code></p></div>
                   <div class="flex items-center gap-2">
                     <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
                     <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
@@ -620,7 +846,20 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Fluxo do template</h3>
-                <p class="text-sm text-muted leading-7">A rota prepara os dados em Python e o HTML recebe esses valores com Jinja2. No seu fluxo, o usuário precisa entender que a pasta do projeto vem primeiro e a pasta <code>templates/</code> fica dentro dela.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card python-flow">
+                    <div class="lesson-mini-title"><span>🐍</span><span>Python prepara os dados</span></div>
+                    <p>A rota em Flask organiza as informações em Python antes de enviar qualquer coisa para a página.</p>
+                  </div>
+                  <div class="lesson-mini-card template-flow">
+                    <div class="lesson-mini-title"><span>🎨</span><span>O HTML recebe com Jinja2</span></div>
+                    <p>O template usa <code>render_template</code> para receber variáveis e montar a página com conteúdo dinâmico.</p>
+                  </div>
+                  <div class="lesson-mini-card folder-flow">
+                    <div class="lesson-mini-title"><span>📁</span><span>A pasta vem primeiro</span></div>
+                    <p>No seu fluxo, o aluno precisa entender que a pasta do projeto vem primeiro e que a pasta <code>templates/</code> fica dentro dela.</p>
+                  </div>
+                </div>
               </div>
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Estrutura esperada</h3>
@@ -629,21 +868,57 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
 └── templates\
     └── perfil.html</code></pre>
                 <p class="mt-4 text-sm text-muted leading-7">Ou seja: se o projeto estiver em <code>c:\dev\flask\meu-projeto-flask</code>, o template <code>perfil.html</code> deve ficar em <code>c:\dev\flask\meu-projeto-flask\templates\perfil.html</code>.</p>
-              </div>
-            </div>
-            <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Render template Flask">
-              <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
-                <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Páginas web</p><h3 class="mt-1 text-lg font-semibold text-white">render_template</h3></div>
-                <div class="flex items-center gap-2">
-                  <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
-                  <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                <div class="lesson-mini-grid text-sm text-muted leading-7 mt-4">
+                  <div class="lesson-mini-card rota">
+                    <div class="lesson-mini-title"><span>📍</span><span>Onde o Flask procura</span></div>
+                    <p>Por padrão, o Flask procura arquivos HTML dentro da pasta <code>templates/</code>. Se o arquivo ficar fora dela, a renderização não encontra a página.</p>
+                  </div>
                 </div>
               </div>
-              <div class="p-5"><pre><code><span class="py-key">from</span> flask <span class="py-key">import</span> render_template
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Render template Flask">
+                <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Páginas web</p><h3 class="mt-1 text-lg font-semibold text-white">render_template</h3></div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                    <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                  </div>
+                </div>
+                <div class="p-5"><pre><code><span class="py-key">from</span> flask <span class="py-key">import</span> render_template
 
 @app.route(<span class="py-str">"/perfil"</span>)
 <span class="py-key">def</span> <span class="py-fn">perfil</span>():
     <span class="py-key">return</span> <span class="py-fn">render_template</span>(<span class="py-str">"perfil.html"</span>, nome=<span class="py-str">"Ana"</span>)</code></pre></div>
+              </div>
+
+              <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Template com lista de produtos em Flask">
+                <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Lista dinâmica</p><h3 class="mt-1 text-lg font-semibold text-white">Produtos</h3></div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                    <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                  </div>
+                </div>
+                <div class="p-5"><pre><code>@app.route(<span class="py-str">"/produtos"</span>)
+<span class="py-key">def</span> <span class="py-fn">produtos</span>():
+    lista = [<span class="py-str">"Notebook"</span>, <span class="py-str">"Mouse"</span>, <span class="py-str">"Teclado"</span>]
+    <span class="py-key">return</span> <span class="py-fn">render_template</span>(<span class="py-str">"produtos.html"</span>, produtos=lista)</code></pre></div>
+              </div>
+
+              <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Template com dashboard simples em Flask">
+                <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Dashboard</p><h3 class="mt-1 text-lg font-semibold text-white">Resumo do sistema</h3></div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                    <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                  </div>
+                </div>
+                <div class="p-5"><pre><code>@app.route(<span class="py-str">"/dashboard"</span>)
+<span class="py-key">def</span> <span class="py-fn">dashboard</span>():
+    dados = {<span class="py-str">"usuarios"</span>: 120, <span class="py-str">"pedidos"</span>: 38}
+    <span class="py-key">return</span> <span class="py-fn">render_template</span>(<span class="py-str">"dashboard.html"</span>, dados=dados)</code></pre></div>
+              </div>
             </div>
             <div>
               <button type="button" class="learn-more-btn" data-info-title="Templates e Jinja2" data-info-content="<p><strong>Jinja2 permite inserir variáveis e lógica leve no HTML.</strong> Assim, você consegue renderizar páginas personalizadas com dados vindos do Flask.</p><p>Isso é ótimo para dashboards, páginas administrativas e sistemas internos onde servidor e front estão no mesmo projeto.</p>" onclick="openInfoModal(this)"><span class='emoji-bounce'>🎨</span><span>Saiba mais</span></button>
@@ -663,22 +938,76 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Quando usar</h3>
-                <p class="text-sm text-muted leading-7">O CDN é ótimo para estudo, validação visual rápida e páginas simples. Em projetos maiores, o ideal costuma ser usar build local com configuração dedicada.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card python-flow">
+                    <div class="lesson-mini-title"><span>⚡</span><span>Prototipação rápida</span></div>
+                    <p>O CDN é ótimo para estudo, validação visual rápida e páginas simples sem precisar configurar build.</p>
+                  </div>
+                  <div class="lesson-mini-card template-flow">
+                    <div class="lesson-mini-title"><span>🧪</span><span>Treinamento e testes</span></div>
+                    <p>Em aulas e exemplos, ele acelera muito porque o aluno consegue estilizar a página logo no primeiro contato.</p>
+                  </div>
+                </div>
               </div>
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Onde colocar</h3>
-                <p class="text-sm text-muted leading-7">Inclua o script no template base, como <code>base.html</code>, para reaproveitar o estilo em várias páginas.</p>
-              </div>
-            </div>
-            <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Template Flask com Tailwind CDN">
-              <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
-                <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Template base</p><h3 class="mt-1 text-lg font-semibold text-white">templates/base.html</h3></div>
-                <div class="flex items-center gap-2">
-                  <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
-                  <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card folder-flow">
+                    <div class="lesson-mini-title"><span>📄</span><span>Template base</span></div>
+                    <p>Inclua o script no template base, como <code>base.html</code>, para reaproveitar o estilo em várias páginas.</p>
+                  </div>
+                  <div class="lesson-mini-card base">
+                    <div class="lesson-mini-title"><span>🧱</span><span>Visão de projeto</span></div>
+                    <p>Assim você centraliza layout, classes e estrutura principal em um único arquivo antes de criar páginas derivadas.</p>
+                  </div>
                 </div>
               </div>
-              <div class="p-5"><pre><code><span class="py-str">&lt;!doctype html&gt;</span>
+            </div>
+            <div class="grid xl:grid-cols-3 gap-6">
+              <div class="rounded-2xl border border-border bg-card p-6">
+                <h3 class="text-xl font-bold text-white mb-4">🔗 Link do CDN</h3>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card cdn-link">
+                    <div class="lesson-mini-title"><span>🌐</span><span>Script usado no projeto</span></div>
+                    <p><code>https://cdn.tailwindcss.com</code></p>
+                    <p class="mt-3">Coloque esse script no <code>&lt;head&gt;</code> para liberar as classes do Tailwind no template.</p>
+                  </div>
+                  <div class="lesson-mini-card template-flow">
+                    <div class="lesson-mini-title"><span>✨</span><span>Facilidade no dia a dia</span></div>
+                    <p>Com o CDN, você começa sem build nem instalação extra. Ótimo para aula, teste e protótipo.</p>
+                  </div>
+                  <div class="lesson-mini-card base">
+                    <div class="lesson-mini-title"><span>📅</span><span>Informação interessante</span></div>
+                    <p>O Tailwind CSS foi lançado em <code>2017</code>. Ficou popular por agilizar interfaces com classes utilitárias.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-border bg-card p-6">
+                <h3 class="text-xl font-bold text-white mb-4">📁 Árvore do diretório</h3>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card cdn-tree">
+                    <div class="lesson-mini-title"><span>🗂️</span><span>Onde fica o base.html</span></div>
+                    <pre><code>c:\dev\flask\meu-projeto-flask\
+├── app.py
+└── templates\
+    └── base.html</code></pre>
+                    <p class="mt-3">O arquivo <code>base.html</code> fica dentro da pasta <code>templates/</code>, porque será renderizado pelo Flask.</p>
+                  </div>
+                  <div class="lesson-mini-card folder-flow">
+                    <div class="lesson-mini-title"><span>🧭</span><span>Por que isso ajuda</span></div>
+                    <p>Com o <code>base.html</code> no lugar certo, você reaproveita cabeçalho, rodapé e o link do CDN em várias páginas.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Template Flask com Tailwind CDN">
+                <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
+                  <div><p class="text-xs font-mono uppercase tracking-[0.18em] text-muted">Template base</p><h3 class="mt-1 text-lg font-semibold text-white">templates/base.html</h3></div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCode(this)" class="code-action-btn"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copiar</span></button>
+                    <button type="button" onclick="expandCode(this)" class="code-action-btn"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Expandir</span></button>
+                  </div>
+                </div>
+                <div class="p-5"><pre><code><span class="py-str">&lt;!doctype html&gt;</span>
 <span class="py-str">&lt;html lang="pt-BR"&gt;</span>
 <span class="py-str">&lt;head&gt;</span>
   <span class="py-str">&lt;meta charset="utf-8"&gt;</span>
@@ -692,6 +1021,7 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
   <span class="py-str">&lt;/main&gt;</span>
 <span class="py-str">&lt;/body&gt;</span>
 <span class="py-str">&lt;/html&gt;</span></code></pre></div>
+              </div>
             </div>
             <div>
               <button type="button" class="learn-more-btn" data-info-title="Tailwind CDN no contexto do Flask" data-info-content="<p><strong>Esse formato combina muito bem com um template base.</strong> Você centraliza o carregamento do Tailwind e deixa os demais arquivos focados apenas no conteúdo.</p><p>Para treinamento, isso acelera bastante a construção de interfaces sem exigir configuração extra de bundler.</p>" onclick="openInfoModal(this)"><span class='emoji-bounce'>🎯</span><span>Saiba mais</span></button>
@@ -708,14 +1038,28 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
               <h2 class="text-3xl font-bold text-white">Rotas com Métodos HTTP</h2>
               <p class="text-muted mt-2 leading-7">Uma mesma rota pode responder de forma diferente conforme o método HTTP, como <code>GET</code>, <code>POST</code>, <code>PUT</code> ou <code>DELETE</code>.</p>
             </div>
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Leitura rápida dos métodos</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p><strong class="text-white">GET</strong> costuma exibir dados ou páginas.</p>
-                  <p><strong class="text-white">POST</strong> envia dados novos, como cadastro, contato ou login.</p>
-                  <p>Essa separação ajuda a manter o fluxo da aplicação mais previsível.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted leading-7">
+                  <div class="lesson-mini-card get-method">
+                    <div class="lesson-mini-title"><span>📖</span><span>GET</span></div>
+                    <p>Costuma exibir dados, páginas, listas e detalhes que o usuário quer consultar.</p>
+                  </div>
+                  <div class="lesson-mini-card post-method">
+                    <div class="lesson-mini-title"><span>📨</span><span>POST</span></div>
+                    <p>Envia dados novos, como cadastro, contato, login ou criação de registros.</p>
+                  </div>
+                  <div class="lesson-mini-card put-method">
+                    <div class="lesson-mini-title"><span>🛠️</span><span>PUT</span></div>
+                    <p>É usado para atualizar informações já existentes em um recurso da aplicação.</p>
+                  </div>
+                  <div class="lesson-mini-card delete-method">
+                    <div class="lesson-mini-title"><span>🗑️</span><span>DELETE</span></div>
+                    <p>Serve para remover dados, registros ou recursos que não serão mais usados.</p>
+                  </div>
                 </div>
+                <p class="mt-4 text-sm text-muted leading-7">Separar bem esses métodos ajuda a deixar o fluxo da aplicação mais previsível, organizado e profissional.</p>
               </div>
               <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Métodos HTTP Flask">
                 <div class="flex items-center justify-between gap-4 border-b border-border bg-base/40 px-5 py-4">
@@ -752,10 +1096,19 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-bold text-white mb-4">Boas práticas para resposta JSON</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p>Use nomes de chaves claros, como <code>status</code>, <code>dados</code> e <code>erro</code>.</p>
-                  <p>Mantenha a estrutura estável para facilitar consumo no frontend.</p>
-                  <p>Padronizar cedo ajuda muito quando a API começa a crescer.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card json-keys">
+                    <div class="lesson-mini-title"><span>🏷️</span><span>Chaves claras</span></div>
+                    <p>Use nomes de chaves simples e previsíveis, como <code>status</code>, <code>dados</code> e <code>erro</code>.</p>
+                  </div>
+                  <div class="lesson-mini-card json-structure">
+                    <div class="lesson-mini-title"><span>🧱</span><span>Estrutura estável</span></div>
+                    <p>Mantenha o mesmo formato de resposta para facilitar o consumo no frontend e reduzir confusão.</p>
+                  </div>
+                  <div class="lesson-mini-card json-growth">
+                    <div class="lesson-mini-title"><span>📈</span><span>Crescimento saudável</span></div>
+                    <p>Padronizar cedo ajuda muito quando a API começa a crescer e passa a ter mais rotas e clientes.</p>
+                  </div>
                 </div>
               </div>
               <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="API JSON Flask">
@@ -780,7 +1133,7 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
               </div>
             </div>
             <div>
-              <button type="button" class="learn-more-btn" data-info-title="Por que JSON é tão importante?" data-info-content="<p><strong>JSON virou o formato padrão de troca de dados entre front-end e back-end.</strong> É simples, leve e muito compatível com apps web, mobile e ferramentas como FlutterFlow.</p><p>Quando sua rota retorna JSON, ela deixa de ser uma página e passa a funcionar como serviço de dados.</p>" onclick="openInfoModal(this)"><span class='emoji-bounce'>📦</span><span>Saiba mais</span></button>
+              <button type="button" class="learn-more-btn" data-info-title="Por que JSON é tão importante?" data-info-content="<p><strong>JSON virou o formato padrão de troca de dados entre front-end e back-end.</strong> É simples, leve e muito compatível com apps web, mobile e ferramentas como FlutterFlow.</p><p>Quando sua rota retorna JSON, ela deixa de ser uma página e passa a funcionar como serviço de dados.</p><p><strong>🚦 Status mais usados em APIs:</strong></p><p>✅ <code>200 OK</code> para resposta bem-sucedida.<br>🆕 <code>201 Created</code> quando um novo registro foi criado.<br>⚠️ <code>400 Bad Request</code> quando os dados enviados estão errados.<br>🔐 <code>401 Unauthorized</code> quando falta autenticação.<br>🔎 <code>404 Not Found</code> quando o recurso não existe.<br>💥 <code>500 Internal Server Error</code> quando ocorre uma falha no servidor.</p>" onclick="openInfoModal(this)"><span class='emoji-bounce'>📦</span><span>Saiba mais</span></button>
             </div>
             <div class="flex justify-between pt-4">
               <button onclick="showStep('step-routes-methods')" class="text-muted hover:text-white px-4 py-2 text-sm flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
@@ -906,10 +1259,19 @@ static/</code></pre>
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6">
                 <h3 class="text-xl font-semibold text-white mb-4">Como evoluir esse exemplo</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p>Troque a lista fixa por dados vindos de banco ou arquivo.</p>
-                  <p>Adicione paginação, filtros e códigos de status HTTP.</p>
-                  <p>Use esse padrão como base para um CRUD simples.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card data-source">
+                    <div class="lesson-mini-title"><span>🗄️</span><span>Troque a fonte dos dados</span></div>
+                    <p>Substitua a lista fixa por dados vindos de banco, arquivo JSON ou outra origem real.</p>
+                  </div>
+                  <div class="lesson-mini-card api-growth">
+                    <div class="lesson-mini-title"><span>📚</span><span>Faça a API crescer</span></div>
+                    <p>Adicione paginação, filtros e códigos de status HTTP para deixar a resposta mais profissional.</p>
+                  </div>
+                  <div class="lesson-mini-card crud-base">
+                    <div class="lesson-mini-title"><span>🧩</span><span>Use como base de CRUD</span></div>
+                    <p>Esse padrão já serve como ponto de partida para criar, listar, editar e excluir registros.</p>
+                  </div>
                 </div>
               </div>
               <div class="rounded-2xl border border-border bg-card overflow-hidden" data-code-card data-code-title="Rota JSON em Flask">
@@ -949,20 +1311,45 @@ app = <span class="py-fn">Flask</span>(<span class="py-str">__name__</span>)
             </div>
             <div class="grid md:grid-cols-2 gap-6">
               <div class="rounded-2xl border border-border bg-card p-6 md:p-8">
-                <div class="space-y-5 text-sm text-muted leading-8">
-                  <p><strong class="text-white">Python</strong> é uma linguagem produtiva, clara e versátil.</p>
-                  <p><strong class="text-white">Flask</strong> é uma forma leve de aprender e construir aplicações web.</p>
-                  <p><strong class="text-white">Requisitos básicos</strong> incluem Python, editor, terminal e noções iniciais de programação.</p>
-                  <p><strong class="text-white">Bibliotecas importantes</strong> ajudam em banco, autenticação, testes, variáveis de ambiente e deploy.</p>
+                <h3 class="text-xl font-semibold text-white mb-4">Resumo da base</h3>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card summary-python">
+                    <div class="lesson-mini-title"><span>🐍</span><span>Python</span></div>
+                    <p>Python é uma linguagem produtiva, clara e versátil para aprender e construir projetos reais.</p>
+                  </div>
+                  <div class="lesson-mini-card summary-flask">
+                    <div class="lesson-mini-title"><span>🌐</span><span>Flask</span></div>
+                    <p>Flask é uma forma leve e prática de criar aplicações web, APIs e páginas renderizadas.</p>
+                  </div>
+                  <div class="lesson-mini-card summary-base">
+                    <div class="lesson-mini-title"><span>🧰</span><span>Base necessária</span></div>
+                    <p>Editor, terminal, organização da pasta e noções de HTTP ajudam muito no começo.</p>
+                  </div>
+                  <div class="lesson-mini-card summary-next">
+                    <div class="lesson-mini-title"><span>🚀</span><span>Próximo passo</span></div>
+                    <p>O caminho ideal agora é criar uma API simples, conectar banco e continuar evoluindo o projeto.</p>
+                  </div>
                 </div>
               </div>
               <div class="rounded-2xl border border-border bg-card p-6 md:p-8">
                 <h3 class="text-xl font-semibold text-white mb-4">Roteiro de continuidade</h3>
-                <div class="space-y-3 text-sm text-muted leading-7">
-                  <p>Montar um pequeno CRUD com templates ou JSON.</p>
-                  <p>Adicionar banco com SQLAlchemy.</p>
-                  <p>Versionar tudo com Git desde os primeiros arquivos.</p>
-                  <p>Depois disso, pensar em autenticação e deploy.</p>
+                <div class="lesson-mini-grid text-sm text-muted leading-7">
+                  <div class="lesson-mini-card roadmap-crud">
+                    <div class="lesson-mini-title"><span>🧩</span><span>Monte um CRUD</span></div>
+                    <p>Crie um pequeno CRUD com templates ou JSON para praticar rotas, leitura e envio de dados.</p>
+                  </div>
+                  <div class="lesson-mini-card roadmap-db">
+                    <div class="lesson-mini-title"><span>🗄️</span><span>Adicione banco</span></div>
+                    <p>Depois disso, conecte o projeto a um banco com SQLAlchemy para trabalhar com dados reais.</p>
+                  </div>
+                  <div class="lesson-mini-card roadmap-git">
+                    <div class="lesson-mini-title"><span>📝</span><span>Versione com Git</span></div>
+                    <p>Use Git desde os primeiros arquivos para acompanhar mudanças e organizar a evolução do projeto.</p>
+                  </div>
+                  <div class="lesson-mini-card roadmap-deploy">
+                    <div class="lesson-mini-title"><span>🚀</span><span>Pense no próximo nível</span></div>
+                    <p>Com a base pronta, avance para autenticação, organização maior da app e primeiros passos de deploy.</p>
+                  </div>
                 </div>
               </div>
             </div>
